@@ -58,12 +58,8 @@ export class SudoRun {
       }
 
       // 保存密码
-      this.setPasswordPromise = setPassword(
-        storeService,
-        SudoRun.passwordStorageKey,
-        safePassword
-      ).catch(console.warn);
-    })();
+      this.setPasswordPromise = setPassword(storeService, SudoRun.passwordStorageKey, safePassword);
+    })().catch(console.warn);
   }
 
   public async checkSudo() {
@@ -175,10 +171,16 @@ export class SudoRun {
   }
 
   private async loadPassword() {
-    const p = await getPassword(storeService, SudoRun.passwordStorageKey);
+    try {
+      const p = await getPassword(storeService, SudoRun.passwordStorageKey);
 
-    if (p) {
-      this.password = p;
+      if (p) {
+        this.password = p;
+      }
+    } catch (e) {
+      console.warn(e);
+
+      throw new Errors.KeychainFailed({ message: e.message });
     }
   }
 }

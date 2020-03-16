@@ -39,7 +39,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
           if (redirect === 'setting') {
             return {
-              commands: ['/dashboard'],
+              commands: undefined,
             };
           }
 

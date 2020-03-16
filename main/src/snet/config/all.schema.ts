@@ -125,7 +125,7 @@ function getStepperSchema() {
   const first = base.shift();
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  set(first!, 'hidden', true);
+  set(first!, 'titleHidden', true);
 
   base.forEach((item) => {
     const { items } = item;

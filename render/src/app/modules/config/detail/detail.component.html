@@ -1,7 +1,7 @@
 <div class="settings" *ngIf="group" [formGroup]="group">
   <div *ngFor="let config of configSchema">
-    <div class="settings">
-      <div class="header" *ngIf="!config.hidden">
+    <div class="settings" *ngIf="!config.hidden">
+      <div class="header">
         <div class="title">
           {{ config.title }}
         </div>

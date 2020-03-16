@@ -10,6 +10,7 @@ export enum ERROR_MAP {
   NoSnetConfigFound = 'snet 配置不存在',
 
   NoSudoPermission = '无sudo权限',
+  KeychainFailed = '秘钥出现问题',
 
   NoHandleFound = '无相关处理函数',
 
