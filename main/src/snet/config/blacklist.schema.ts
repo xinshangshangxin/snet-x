@@ -1,0 +1,51 @@
+export const blacklistSchema = {
+  title: '黑白名单',
+  items: {
+    'force-fq': {
+      type: 'advancedSelect',
+      advancedSelectType: 'inputTag',
+      label: '强制翻墙域名',
+      placeholder: '回车添加域名',
+      required: false,
+      default: [],
+    },
+    'block-host-file': {
+      type: 'input',
+      advancedSelectType: 'text',
+      label: '屏蔽域名列表文件',
+      required: false,
+      default: '',
+    },
+    'block-hosts': {
+      type: 'advancedSelect',
+      advancedSelectType: 'inputTag',
+      label: '屏蔽域名',
+      placeholder: '回车添加域名',
+      required: false,
+      default: [],
+    },
+    'bypass-hosts': {
+      type: 'advancedSelect',
+      advancedSelectType: 'inputTag',
+      label: '直连域名',
+      placeholder: '回车添加域名',
+      required: false,
+      default: [],
+    },
+    // 'bypass-src-ips': {
+    //   type: 'advancedSelect',
+    //   advancedSelectType: 'inputTag',
+    //   label: '绕过来自这些IP的流量|仅在路由(router)模式下工作',
+    //   placeholder: '回车添加IP',
+    //   required: false,
+    //   default: [],
+    // },
+    'host-map': {
+      type: 'simple-object',
+      label: '域名映射',
+      required: false,
+      placeholders: ['host', 'ip'],
+      default: {},
+    },
+  },
+};

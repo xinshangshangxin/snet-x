@@ -1,0 +1,69 @@
+<div class="search">
+  <form>
+    <mat-form-field class="inner">
+      <mat-label>搜索</mat-label>
+      <input
+        matInput
+        #myInput
+        placeholder="回车查看帮助"
+        (keyup)="keyup($event)"
+        [(ngModel)]="searchValue"
+        [ngModelOptions]="{ standalone: true }"
+      />
+      <button
+        mat-button
+        type="button"
+        *ngIf="searchValue"
+        matSuffix
+        mat-icon-button
+        aria-label="Clear"
+        (click)="searchValue = ''; searchAction('')"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </form>
+</div>
+
+<div [ngSwitch]="showMenu.type">
+  <ng-container *ngSwitchCase="'config'">
+    <div fxLayout="row wrap" fxLayoutAlign="space-between">
+      <div
+        class="card mat-card"
+        fxLayout="row"
+        fxLayoutAlign="space-around center"
+        matRipple
+        *ngFor="let menu of showMenu.menus"
+        (click)="menuAction(menu)"
+      >
+        <div class="inner" fxLayout="row" fxLayoutAlign="space-around center">
+          <div class="left">
+            <div class="title">
+              {{ menu.title }}
+            </div>
+
+            <div class="intro">
+              {{ menu.intro }}
+            </div>
+          </div>
+          <div class="right">
+            <mat-icon>{{ menu.icon }}</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'ss'">
+    <app-config-ss-list [configs]="showMenu.ssConfigs"></app-config-ss-list>
+  </ng-container>
+  <ng-container *ngSwitchDefault>
+    <mat-card
+      class="message"
+      fxLayout="row"
+      fxLayoutAlign="center center"
+      (click)="enterAction('message')"
+    >
+      {{ showMenu.message }}
+    </mat-card>
+  </ng-container>
+</div>

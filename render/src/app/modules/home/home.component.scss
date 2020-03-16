@@ -1,0 +1,21 @@
+.drag {
+    -webkit-app-region: drag;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+}
+
+.wrap {
+    max-width: 800px;
+
+    margin: 0 auto;
+
+    padding: 0 30px;
+
+    app-detail {
+        width: 100%;
+    }
+}

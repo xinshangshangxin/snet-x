@@ -1,0 +1,38 @@
+<div *ngIf="!result" fxLayout="row" fxLayoutAlign="center" style="min-height: 250px;">
+  <mat-spinner></mat-spinner>
+</div>
+
+<table mat-table [dataSource]="result" *ngIf="result">
+  <ng-container matColumnDef="group">
+    <th mat-header-cell *matHeaderCellDef>区域</th>
+    <td mat-cell *matCellDef="let element">{{ element.group === 'foreign' ? '国外' : '国内' }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="ip">
+    <th mat-header-cell *matHeaderCellDef>IP</th>
+    <td mat-cell *matCellDef="let element">{{ element.ip || '检测失败' }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="shortAddress">
+    <th mat-header-cell *matHeaderCellDef>地址</th>
+    <td mat-cell *matCellDef="let element">{{ element.shortAddress || '检测失败' }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="key">
+    <th mat-header-cell *matHeaderCellDef>服务商</th>
+    <td mat-cell *matCellDef="let element">{{ element.key }}</td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+<div fxLayout="row" fxLayoutAlign="space-around" style="margin-top: 20px;">
+  <button (click)="check()" mat-raised-button>
+    再检测一次
+  </button>
+
+  <button [routerLink]="['/dashboard']" mat-raised-button>
+    返回
+  </button>
+</div>

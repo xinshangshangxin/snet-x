@@ -1,0 +1,17 @@
+:host {
+    width: 100%;
+}
+
+.action mat-form-field,
+.list mat-form-field {
+    max-width: 90px;
+    overflow: hidden;
+}
+
+.list {
+    margin-bottom: 10px;
+
+    mat-form-field {
+        margin-bottom: 10px;
+    }
+}

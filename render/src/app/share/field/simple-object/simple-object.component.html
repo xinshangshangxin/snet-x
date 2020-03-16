@@ -1,0 +1,45 @@
+<form [formGroup]="formGroup" *ngIf="!!item">
+  <div class="label" fxFlex="1 1 auto">
+    {{ item.value.label }} <span *ngIf="!item.value.disableLabelAppend"> ({{ item.key }})</span>
+  </div>
+  <div class="input" fxFlex="1 1 300px">
+    <div class="action" fxLayout="row" fxLayoutAlign="end center">
+      <mat-form-field floatLabel="never">
+        <mat-label>{{ placeholders[0] }}</mat-label>
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="inputKey"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </mat-form-field>
+
+      <mat-form-field floatLabel="never">
+        <mat-label>{{ placeholders[1] }}</mat-label>
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="inputValue"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </mat-form-field>
+
+      <button mat-button (click)="add()" style="max-width: 20px">添加</button>
+    </div>
+
+    <div
+      class="list"
+      fxLayout="row"
+      fxLayoutAlign="end center"
+      *ngFor="let line of data | keyvalue"
+    >
+      <mat-button-toggle-group appearance="legacy">
+        <mat-button-toggle disabled="true">{{ line.key }}</mat-button-toggle>
+        <mat-button-toggle disabled="true">{{ line.value }}</mat-button-toggle>
+        <mat-button-toggle (click)="remove(line.key)">删除</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <br />
+    </div>
+  </div>
+</form>

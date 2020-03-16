@@ -1,0 +1,16 @@
+<div class="search" *ngIf="!search">
+  <form>
+    <mat-form-field class="inner">
+      <mat-label>搜索</mat-label>
+      <input matInput placeholder="配置别名或ss服务器" (keyup)="keyup($event)" />
+    </mat-form-field>
+  </form>
+</div>
+
+<app-config-ss-list [configs]="configs"></app-config-ss-list>
+
+<div>
+  <button [routerLink]="['/dashboard']" mat-button>
+    返回
+  </button>
+</div>

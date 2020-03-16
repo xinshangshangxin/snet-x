@@ -1,0 +1,17 @@
+:host {
+    width: 100%;
+}
+
+.wrap {
+    display: flex;
+    align-items: center;
+
+    .right {
+        text-align: right;
+        font-size: 10px;
+
+        button {
+            padding: 0 6px;
+        }
+    }
+}

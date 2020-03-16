@@ -1,0 +1,20 @@
+{
+  "name": "snet-x",
+  "version": "0.0.1",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "start": "cd main && npm start",
+    "start:pre": "cd main && npm install && cd .. && cd render && npm install",
+    "build:local": "cd render && npm run build:local && cd .. && cd main && npm run build:local"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xinshangshangxin/snet-x"
+  },
+  "keywords": [],
+  "author": "xinshangshangxin",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}

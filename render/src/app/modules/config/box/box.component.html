@@ -1,0 +1,48 @@
+<div
+  *ngFor="let item of schema | keyvalue: asIsOrder; let last = last"
+  [hidden]="item.value.hidden"
+>
+  <div class="settings-box" fxLayout="row" fxLayoutAlign="start center">
+    <ng-container [ngSwitch]="item.value.type">
+      <field-password
+        *ngSwitchCase="'password'"
+        [formGroup]="formGroup"
+        [item]="item"
+      ></field-password>
+
+      <field-checkbox
+        *ngSwitchCase="'checkbox'"
+        [formGroup]="formGroup"
+        [item]="item"
+      ></field-checkbox>
+
+      <field-advanced-select
+        *ngSwitchCase="'advancedSelect'"
+        [formGroup]="formGroup"
+        [item]="item"
+      ></field-advanced-select>
+
+      <field-input *ngSwitchCase="'input'" [formGroup]="formGroup" [item]="item"></field-input>
+
+      <field-select *ngSwitchCase="'select'" [formGroup]="formGroup" [item]="item"></field-select>
+
+      <field-simple-object
+        *ngSwitchCase="'simple-object'"
+        [formGroup]="formGroup"
+        [item]="item"
+      ></field-simple-object>
+
+      <app-ss-import-field
+        *ngSwitchCase="'ss-import'"
+        [formGroup]="formGroup"
+        [item]="item"
+      ></app-ss-import-field>
+
+      <!-- <div *ngSwitchDefault>
+        啊哦, 出错了~
+      </div> -->
+    </ng-container>
+  </div>
+
+  <div class="hr" *ngIf="!last"></div>
+</div>

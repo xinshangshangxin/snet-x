@@ -1,0 +1,40 @@
+<div class="search">
+  <form>
+    <mat-form-field class="inner">
+      <mat-label>检测</mat-label>
+      <input matInput #myInput placeholder="回车执行检测" (keyup)="keyup($event)" />
+    </mat-form-field>
+  </form>
+</div>
+
+<mat-card *ngIf="error"> 域名检测失败 {{ error.message }} </mat-card>
+
+<mat-card *ngIf="checkResult$ | async as result">
+  <div *ngIf="result && result.domain">
+    <div class="line">
+      <div>{{ result?.domain }}</div>
+      <div>
+        <button mat-button color="warn">{{ result?.isFQ ? '国外翻墙' : '国内直连' }}</button>
+      </div>
+    </div>
+    <div class="line">
+      <div>IP地址</div>
+      <div>
+        <button mat-button>{{ result?.answerA.join('; ') }}</button>
+      </div>
+    </div>
+
+    <div class="line" *ngIf="result?.isFQ">
+      <div>HTTP Status</div>
+      <div>
+        <button mat-button>{{ result?.head }}</button>
+      </div>
+    </div>
+  </div>
+</mat-card>
+
+<div fxLayout="row" fxLayoutAlign="space-around" style="margin-top: 20px;">
+  <button [routerLink]="['/dashboard']" mat-raised-button>
+    返回
+  </button>
+</div>

@@ -1,0 +1,14 @@
+asar: false
+
+productName: SnetX
+
+mac:
+  target:
+    - dir
+    - dmg
+    - 7z
+  
+  icon: ./assets/logo.icns
+
+  extendInfo:
+    LSUIElement: 1

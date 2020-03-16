@@ -1,0 +1,33 @@
+.settings-box {
+    padding: 0 16px;
+    min-height: 50px;
+
+    ::ng-deep form {
+        align-items: center;
+
+        .container {
+            width: 100%;
+        }
+
+        .input {
+            text-align: right;
+        }
+
+        .select {
+            text-align: right;
+            line-height: 20px;
+        }
+
+        ng-select {
+            padding-left: 20px;
+        }
+
+        .ng-select .ng-select-container {
+            min-height: 0px;
+        }
+    }
+}
+
+.hr {
+    border: 0.5px solid rgba(0, 0, 0, 0.06);
+}

@@ -1,0 +1,19 @@
+<div fxLayout="row wrap" fxLayoutAlign="space-between center">
+  <mat-card
+    matRipple
+    *ngFor="let item of configs"
+    [routerLink]="['/ss-detail']"
+    [queryParams]="{ configId: item._id }"
+  >
+    <div class="left">
+      {{ item.name }}
+    </div>
+    <div class="right">
+      {{ item['ss-host'] }}
+    </div>
+  </mat-card>
+
+  <mat-card matRipple class="add" [routerLink]="['/ss-detail']">
+    <mat-icon>add</mat-icon>
+  </mat-card>
+</div>

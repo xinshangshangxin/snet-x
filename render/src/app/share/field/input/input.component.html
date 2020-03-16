@@ -1,0 +1,11 @@
+<form [formGroup]="formGroup" *ngIf="!!item">
+  <div class="label" fxFlex="1 1 auto">
+    {{ item.value.label }} <span *ngIf="!item.value.disableLabelAppend"> ({{ item.key }})</span>
+  </div>
+  <div class="input" fxFlex="1 1 200px">
+    <mat-form-field floatLabel="never">
+      <mat-label></mat-label>
+      <input [formControlName]="item.key" matInput [type]="item.value.inputType" />
+    </mat-form-field>
+  </div>
+</form>

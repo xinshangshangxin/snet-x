@@ -1,0 +1,29 @@
+<form [formGroup]="formGroup" *ngIf="!!item">
+  <div class="label" fxFlex="1 1 auto">
+    {{ item.value.label }} <span *ngIf="!item.value.disableLabelAppend"> ({{ item.key }})</span>
+  </div>
+  <div class="input" fxFlex="1 1 200px" style="line-height: 20px;">
+    <ng-container [ngSwitch]="item.value.advancedSelectType">
+      <ng-container *ngSwitchCase="'inputTag'">
+        <ng-select
+          [placeholder]="(isShowPlaceholder && item.value.placeholder) || ''"
+          [formControlName]="item.key"
+          [addTag]="true"
+          [multiple]="true"
+          [selectOnTab]="true"
+          [isOpen]="false"
+          [items]="[]"
+        ></ng-select>
+      </ng-container>
+      <ng-container *ngSwitchDefault>
+        <ng-select
+          [placeholder]="(isShowPlaceholder && item.value.placeholder) || ''"
+          [formControlName]="item.key"
+          addTag="true"
+          addTagText=""
+          [items]="item.value.options"
+        ></ng-select>
+      </ng-container>
+    </ng-container>
+  </div>
+</form>

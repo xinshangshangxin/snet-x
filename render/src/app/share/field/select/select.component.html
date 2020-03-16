@@ -1,0 +1,23 @@
+<form [formGroup]="formGroup" *ngIf="item">
+  <div class="label" fxFlex="1 1 auto">
+    {{ item?.value.label }} <span *ngIf="!item.value.disableLabelAppend"> ({{ item?.key }})</span>
+  </div>
+  <div class="input" fxFlex="1 1 200px">
+    <mat-form-field floatLabel="never">
+      <mat-label>{{ item?.value.label }}</mat-label>
+      <mat-select [formControlName]="item.key">
+        <ng-container *ngIf="isShowName; else elseBlock">
+          <mat-option *ngFor="let option of item.value.options" [value]="option.value"
+            >{{ option.name }}
+          </mat-option>
+        </ng-container>
+
+        <ng-template #elseBlock>
+          <mat-option *ngFor="let option of item.value.options; let index = index" [value]="option"
+            >{{ option }}
+          </mat-option>
+        </ng-template>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</form>

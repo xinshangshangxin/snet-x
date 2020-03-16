@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Snet X</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <style>
+      .loading {
+        opacity: 0;
+        transition: opacity 0.8s ease-in-out;
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        background: #000;
+        z-index: -1;
+      }
+
+      app-root:empty + .loading {
+        opacity: 0.2;
+        z-index: 100;
+      }
+
+      app-root:empty + .loading img {
+        color: #eee;
+        position: absolute;
+        top: 25%;
+        height: 50%;
+        left: 25%;
+        width: 50%;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <app-root></app-root>
+
+    <div class="loading">
+      <img src="./assets/bars.svg" width="200" alt="" />
+    </div>
+  </body>
+</html>

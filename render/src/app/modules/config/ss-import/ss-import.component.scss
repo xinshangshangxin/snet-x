@@ -1,0 +1,26 @@
+.container {
+    max-height: 500px;
+    max-width: 800px;
+
+    min-width: 500px;
+}
+
+.table-container {
+    overflow: auto;
+
+    max-height: 300px;
+
+    table {
+        width: 100%;
+
+        th,
+        td {
+            padding: 0 5px;
+            text-align: center;
+        }
+    }
+}
+
+.action {
+    margin-top: 20px;
+}

@@ -1,0 +1,12 @@
+{
+  "eslint.workingDirectories": [
+    "./main",
+    "./render"
+  ],
+  "cSpell.words": [
+    "Nmdb",
+    "PPID",
+    "Snet",
+    "thenify"
+  ]
+}

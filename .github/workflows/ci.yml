@@ -1,0 +1,112 @@
+name: build and release
+
+on: push
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        node-version: [12]
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: build
+        working-directory: ./
+        run: |
+
+          # render build
+          cd ./render
+          npm install 
+          npm run build
+
+          cd ../
+
+          # main build
+          cd ./main
+          npm install
+          npm run build
+
+          cd ../
+
+          # electron prepare
+          cp -r ./main/dist ./dist
+          cp -r ./main/package.json ./main/package-lock.json ./main/electron-builder.yml ./main/assets ./dist/
+          cp -r ./render/dist ./dist/render
+
+          # modify package version
+          node -e "const version = require('./package.json').version; const pkg = require('./dist/package.json'); pkg.version = version; require('fs').writeFileSync('./dist/package.json', JSON.stringify(pkg, null, 2));"
+
+          # electron build
+          cd ./dist
+          npm install
+          npm run electron-builder
+
+          # set env version
+          filename=$(ls ./dist/*.dmg)
+          pre=${filename#*SnetX-}
+          version=${pre%.dmg}
+          echo "::set-env name=VERSION::${version}"
+
+          cd ../
+          ls -l ./dist/dist/
+
+      - name: Upload
+        uses: actions/upload-artifact@v1
+        with:
+          name: SnetX
+          path: ./dist/dist/SnetX-${{ env.VERSION }}.dmg
+
+      - name: Upload
+        uses: actions/upload-artifact@v1
+        with:
+          name: 7z
+          path: ./dist/dist/SnetX-${{ env.VERSION }}-mac.7z
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: create release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - uses: actions/download-artifact@v1
+        with:
+          name: SnetX
+
+      - name: set asset_path env
+        run: |
+          ls -lah SnetX
+          asset_path=$(ls ./SnetX/*.dmg)
+          asset_name=${asset_path#*SnetX/}
+   
+          echo "::set-env name=ASSET_PATH::${asset_path}"
+          echo "::set-env name=ASSET_NAME::${asset_name}"
+
+      - name: Upload Mac Release Asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.ASSET_PATH }}
+          asset_name: ${{ env.ASSET_NAME }}
+          asset_content_type: application/octet-stream

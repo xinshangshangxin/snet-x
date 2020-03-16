@@ -1,0 +1,15 @@
+:host {
+    width: 100%;
+}
+
+.line {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    > div {
+        flex: 0 0 50%;
+        overflow: hidden;
+        text-align: center;
+    }
+}

@@ -1,0 +1,15 @@
+<div class="wrap" *ngIf="item">
+  <div class="label" fxFlex="1 1 auto">
+    {{ item.value.label }} <span *ngIf="!item.value.disableLabelAppend"> ({{ item.key }})</span>
+  </div>
+  <div class="right" fxFlex="1 1 300px">
+    <mat-button-toggle-group #group="matButtonToggleGroup">
+      <mat-button-toggle (click)="scan()">
+        扫描屏幕上二维码
+      </mat-button-toggle>
+      <mat-button-toggle (click)="openDialog()">
+        导入(ssr://或ss://)
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+</div>
