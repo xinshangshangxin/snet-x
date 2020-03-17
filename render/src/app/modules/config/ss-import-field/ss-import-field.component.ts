@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ElectronRouterService } from '../../../core/services/electron-router.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { SSConfig } from '../../../core/services/ss-url-decode.service';
+import { LoadingDialogService } from '../../../loading-dialog/loading-dialog.service';
 import { DialogData, SsImportComponent } from '../ss-import/ss-import.component';
 
 @Component({
@@ -29,7 +30,8 @@ export class SsImportFieldComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private electronRouterService: ElectronRouterService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private loadingDialogService: LoadingDialogService
   ) {}
 
   public ngOnInit(): void {}
@@ -67,8 +69,16 @@ export class SsImportFieldComponent implements OnInit {
   }
 
   public async scan() {
-    this.notificationService.open('解析二维码中, 请稍等...');
-    const url = await this.electronRouterService.post('qrcode:scan');
+    const message = '解析二维码中, 请稍等...';
+
+    this.loadingDialogService.start({ message });
+    let url = '';
+    try {
+      url = await this.electronRouterService.post('qrcode:scan');
+    } catch (e) {
+      console.warn(e);
+    }
+    this.loadingDialogService.stop();
 
     if (!url) {
       this.notificationService.open('未扫描到二维码');

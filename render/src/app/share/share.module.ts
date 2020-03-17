@@ -49,6 +49,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { LoadingBarModule } from '@ngx-loading-bar/core';
 import { LoadingBarRouterModule } from '@ngx-loading-bar/router';
 
+import { LoadingDialogModule } from '../loading-dialog/loading-dialog.module';
 import { ClickStopPropagationDirective } from './click-stop-propagation.directive';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { AdvancedSelectComponent } from './field/advanced-select/advanced-select.component';
@@ -67,6 +68,7 @@ const modules = [
   ReactiveFormsModule,
   NgSelectModule,
 
+  LoadingDialogModule,
   LoadingBarModule,
   LoadingBarRouterModule,
 

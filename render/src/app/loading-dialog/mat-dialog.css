@@ -1,0 +1,8 @@
+.loading-dialog .mat-dialog-container {
+    box-shadow: none;
+    background: rgba(0, 0, 0, 0);
+}
+
+.loading-dialog {
+    background: rgba(255, 255, 255, 0.7);
+}

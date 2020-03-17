@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ElectronRouterService } from '../../core/services/electron-router.service';
+import { LoadingDialogService } from '../../loading-dialog/loading-dialog.service';
 
 @Component({
   selector: 'app-ip-check',
@@ -19,7 +20,10 @@ export class IpCheckComponent implements OnInit {
 
   public displayedColumns: string[] = ['group', 'ip', 'shortAddress', 'key'];
 
-  constructor(private electronRouterService: ElectronRouterService) {}
+  constructor(
+    private electronRouterService: ElectronRouterService,
+    private loadingDialogService: LoadingDialogService
+  ) {}
 
   public async ngOnInit() {
     await this.check();
@@ -27,6 +31,13 @@ export class IpCheckComponent implements OnInit {
 
   public async check() {
     this.result = undefined;
-    this.result = await this.electronRouterService.post('ip:check');
+
+    this.loadingDialogService.start({ message: 'IP 检测中...' });
+    try {
+      this.result = await this.electronRouterService.post('ip:check');
+    } catch (e) {
+      console.warn(e);
+    }
+    this.loadingDialogService.stop();
   }
 }

@@ -25,14 +25,15 @@
         z-index: 100;
       }
 
-      app-root:empty + .loading img {
+      app-root:empty + .loading h1 {
+        font-size: 50px;
+        font-family: Roboto, 'Helvetica Neue', sans-serif;
         color: #eee;
         position: absolute;
-        top: 25%;
-        height: 50%;
-        left: 25%;
-        width: 50%;
+        top: 40%;
+        width: 100%;
         text-align: center;
+        transform: translate(0, -50%);
       }
     </style>
   </head>
@@ -40,7 +41,7 @@
     <app-root></app-root>
 
     <div class="loading">
-      <img src="./assets/bars.svg" width="200" alt="" />
+      <h1>Snet X 载入中...</h1>
     </div>
   </body>
 </html>
