@@ -1,4 +1,5 @@
 asar: false
+publish: null
 
 productName: SnetX
 
@@ -7,8 +8,9 @@ mac:
     - dir
     - dmg
     - 7z
-  
+
   icon: ./assets/logo.icns
 
   extendInfo:
     LSUIElement: 1
+

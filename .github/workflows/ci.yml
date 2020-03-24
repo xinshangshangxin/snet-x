@@ -17,23 +17,26 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-
       - name: build
         working-directory: ./
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
         run: |
-
           # render build
           cd ./render
-          npm install 
+          npm install
           npm run build
-
           cd ../
+
+          # update snet core
+          bash .github/shells/download-github-release.sh
+          cat main/assets/version.json
 
           # main build
           cd ./main
           npm install
           npm run build
-
           cd ../
 
           # electron prepare
@@ -48,23 +51,21 @@ jobs:
           cd ./dist
           npm install
           npm run electron-builder
-
           # set env version
           filename=$(ls ./dist/*.dmg)
           pre=${filename#*SnetX-}
           version=${pre%.dmg}
           echo "::set-env name=VERSION::${version}"
-
           cd ../
           ls -l ./dist/dist/
 
-      - name: Upload
+      - name: Upload dmg
         uses: actions/upload-artifact@v1
         with:
           name: SnetX
           path: ./dist/dist/SnetX-${{ env.VERSION }}.dmg
 
-      - name: Upload
+      - name: Upload 7z
         uses: actions/upload-artifact@v1
         with:
           name: 7z
@@ -76,7 +77,6 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
-
       - name: create release
         id: create_release
         uses: actions/create-release@v1.0.0
@@ -87,20 +87,16 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-
       - uses: actions/download-artifact@v1
         with:
           name: SnetX
-
       - name: set asset_path env
         run: |
           ls -lah SnetX
           asset_path=$(ls ./SnetX/*.dmg)
           asset_name=${asset_path#*SnetX/}
-   
           echo "::set-env name=ASSET_PATH::${asset_path}"
           echo "::set-env name=ASSET_NAME::${asset_name}"
-
       - name: Upload Mac Release Asset
         uses: actions/upload-release-asset@v1.0.1
         env:

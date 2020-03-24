@@ -26,3 +26,5 @@ Temporary Items
 node_modules
 dist
 main/.tmp/
+/main/assets/snet
+/main/assets/version.json
