@@ -3,8 +3,7 @@ import { catchError, filter, switchMap } from 'rxjs/operators';
 
 import { exec } from '../shared/shell/exec';
 import { ClickData, ConfigClickData } from '../snet/tray';
-import { logsDir } from '../storage/store-path';
-import { netCheck } from '../utils/net-check';
+import { dbDir, logsDir } from '../storage/store-path';
 import { dealPermission } from './deal-permission';
 import { instance } from './instance';
 import { showWindow } from './show-window';
@@ -20,13 +19,14 @@ async function resolveClick({ id, config, menuItem }: ClickData | ConfigClickDat
       return instance.snet.stop({ persistStatus: true, notify: true });
     case 'log':
       return exec(`open "${logsDir}"`);
+    case 'nedb':
+      return exec(`open "${dbDir}"`);
     case 'permission':
-      console.warn('permission');
       return dealPermission();
     case 'ip':
-      return netCheck.notifyIp();
+    case 'domain':
     case 'setting':
-      instance.redirectSubject.next('setting');
+      instance.redirectSubject.next(id);
       return showWindow();
     default:
       break;

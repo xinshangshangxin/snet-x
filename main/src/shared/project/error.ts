@@ -23,6 +23,10 @@ export enum ERROR_MAP {
   NotInit = '未初始化',
 
   QRCodeDecodeFailed = '二维码解析失败',
+
+  NoGithubReleaseFound = '未找到github release',
+  NetworkNotFQ = '网络未翻墙',
+  DownloadFailed = '下载失败',
 }
 
 export interface ErrorJSON {

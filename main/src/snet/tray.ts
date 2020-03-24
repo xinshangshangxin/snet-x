@@ -125,9 +125,20 @@ class SnetTray {
         id: 'ip',
       },
       {
+        label: '域名检测',
+        type: MenuType.normal,
+        id: 'domain',
+      },
+      { type: MenuType.separator },
+      {
         label: '日志目录',
         type: MenuType.normal,
         id: 'log',
+      },
+      {
+        label: '存储目录',
+        type: MenuType.normal,
+        id: 'nedb',
       },
       {
         label: '设置',

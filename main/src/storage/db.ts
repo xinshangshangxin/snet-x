@@ -29,6 +29,9 @@ const StatusModel = nmdb.model<Status>('Status', {
   snetPath: {
     type: 'string',
   },
+  snetVersion: {
+    type: 'string',
+  },
   running: {
     type: 'boolean',
   },

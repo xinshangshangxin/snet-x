@@ -2,6 +2,7 @@ export interface Status {
   isDefault?: boolean;
   configId?: string;
   snetPath?: string;
+  snetVersion?: string;
   running?: boolean;
   inited?: boolean;
 }

@@ -8,7 +8,7 @@ async function checkPermissionIsInvalid() {
     await sudoRun.checkSudo();
 
     // 检查 snet 程序
-    await snet.checkSnetBin();
+    await snet.checkPath();
 
     // tray 设置
     snet.tray.setPermission(true);

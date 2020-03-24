@@ -28,7 +28,8 @@ export class Router {
 
     const id = v4();
 
-    this.webContents.send(id, cmd, body);
+    console.debug('server request:  ', { id, cmd, body });
+    this.webContents.send('post', id, cmd, body);
 
     if (waitResponse === 'ignore') {
       return BB.resolve();
@@ -70,10 +71,11 @@ export class Router {
         return;
       }
 
-      if (this.deferMap[id]) {
-        console.info('response client', { id, cmd, body });
+      const parsed = try2error(body);
 
-        const parsed = try2error(body);
+      if (this.deferMap[id]) {
+        console.info('client response:  ', { id, cmd, body });
+
         if (parsed instanceof OperationalError) {
           this.deferMap[id].reject(parsed);
         } else {
@@ -84,16 +86,22 @@ export class Router {
         return;
       }
 
+      if (parsed instanceof OperationalError) {
+        console.warn(parsed);
+        return;
+      }
+
       try {
         if (this.handles[cmd]) {
           if (/password/.test(cmd)) {
-            console.info('client request', { id, cmd, body: isDev ? body : 'not show' });
+            console.info('client request:  ', { id, cmd, body: isDev ? body : 'not show' });
           } else {
-            console.info('client request', { id, cmd, body });
+            console.info('client request:  ', { id, cmd, body });
           }
 
           const result = await this.handles[cmd](body);
           event.sender.send('post', id, cmd, result);
+          console.info('server response: ', { id, cmd, result });
           return;
         }
 

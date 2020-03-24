@@ -6,6 +6,7 @@ import { checkIp } from '../shared/net-tools/ip';
 import { sudoRun } from '../shared/shell/sudo-run';
 import { notifyIpResult } from './notification';
 import { exec } from '../shared/shell/exec';
+import { Errors } from '../shared/project/error';
 
 export class NetCheck {
   public static urlPickDomain = /^(https?:\/\/)?(([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6})/;
@@ -37,7 +38,12 @@ export class NetCheck {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  public async checkIsFQ(domain: string) {
+  public async checkIsFQ(url: string) {
+    if (!NetCheck.urlPickDomain.test(url)) {
+      throw new Errors.DomainCheckFailed({ msg: 'not valid domain' });
+    }
+
+    const domain = RegExp.$2;
     const digResult = await dig(`dig ${domain}`);
     const answerA = digResult.answer
       .filter(({ type }) => {

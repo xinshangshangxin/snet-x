@@ -1,6 +1,7 @@
 import { isNaN, toPairs } from 'lodash';
+import { throttleTime } from 'rxjs/operators';
 
-import { getScreenQRCode } from '../qrcode/index';
+import { getScreenQRCode } from '../qrcode';
 import { Errors } from '../shared/project/error';
 import { exec } from '../shared/shell/exec';
 import { sudoRun } from '../shared/shell/sudo-run';
@@ -103,6 +104,38 @@ const routers: RouterMap = {
   'snet:clear': async () => {
     const { snet } = instance;
     await snet?.stop({ notify: true, cleanPf: true });
+  },
+  'snet:can-update': async () => {
+    const { snet } = instance;
+
+    return snet?.canUpdate();
+  },
+  'snet:update': async ({ notifyId, checkIsFQ } = {}) => {
+    const { router, snet } = instance;
+
+    if (checkIsFQ) {
+      if (!snet.isRunning) {
+        throw new Errors.NetworkNotFQ();
+      }
+    }
+
+    const download$ = await snet.download();
+    download$.pipe(throttleTime(1000, undefined, { trailing: true })).subscribe(
+      (value) => {
+        console.info(notifyId, value);
+        router?.post(notifyId, value, 'ignore');
+      },
+      (e) => {
+        console.warn(e);
+        router?.post(notifyId, new Errors.DownloadFailed({ message: e.message }), 'ignore');
+      }
+    );
+  },
+  'snet-path:set': async ({ bin, version } = {}) => {
+    await saveStatus({ snetPath: bin, snetVersion: version });
+
+    const { snet } = instance;
+    await snet.checkPath();
   },
   'qrcode:scan': async () => {
     const { win } = instance;
