@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { OpenExternalOptions, RendererInterface } from 'electron';
 import { Observable, ReplaySubject, Subscription } from 'rxjs';
 
@@ -26,7 +26,7 @@ try {
 @Injectable({
   providedIn: 'root',
 })
-export class ElectronService implements OnDestroy {
+export class ElectronService {
   public static electron = electron;
 
   public static remote = electron?.remote;
@@ -52,11 +52,6 @@ export class ElectronService implements OnDestroy {
       console.info('ElectronService redirectSubject data: ', data);
       this.redirectSubject.next(data);
     }, console.warn);
-  }
-
-  public ngOnDestroy(): void {
-    this.redirectSubject.complete();
-    this.subscription?.unsubscribe();
   }
 
   public static async open(url: string, options?: OpenExternalOptions) {

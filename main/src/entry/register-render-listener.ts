@@ -105,6 +105,14 @@ const routers: RouterMap = {
     const { snet } = instance;
     await snet?.stop({ notify: true, cleanPf: true });
   },
+  'snet:version': async () => {
+    const { snet } = instance;
+    return snet?.version;
+  },
+  'snet:list': async () => {
+    const { snet } = instance;
+    return snet?.list();
+  },
   'snet:can-update': async () => {
     const { snet } = instance;
 
@@ -127,11 +135,15 @@ const routers: RouterMap = {
       },
       (e) => {
         console.warn(e);
-        router?.post(notifyId, new Errors.DownloadFailed({ message: e.message }), 'ignore');
+        router?.post(
+          notifyId,
+          new Errors.DownloadFailed({ message: e.message }).toJSON(),
+          'ignore'
+        );
       }
     );
   },
-  'snet-path:set': async ({ bin, version } = {}) => {
+  'snet:set-version': async ({ bin, version } = {}) => {
     await saveStatus({ snetPath: bin, snetVersion: version });
 
     const { snet } = instance;

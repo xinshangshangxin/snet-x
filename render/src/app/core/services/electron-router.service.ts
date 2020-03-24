@@ -28,6 +28,10 @@ export class ElectronRouterService {
     this.handles[cmd] = fun;
   }
 
+  public unregister(cmd: string) {
+    delete this.handles[cmd];
+  }
+
   public async post<T = any>(
     cmd: string,
     body?: any,
@@ -37,7 +41,7 @@ export class ElectronRouterService {
 
     const id = v4();
 
-    console.debug(`send message: ┣ ${cmd} ┫`, body, id);
+    console.debug(`request:  ┣ ${cmd} ┫`, body, id);
     ipcRenderer?.send('post', id, cmd, body);
 
     if (waitResponse === 'ignore') {
@@ -48,7 +52,9 @@ export class ElectronRouterService {
     this.deferMap[id] = deferred;
 
     return new Promise((resolve, reject) => {
-      setTimeout(reject, waitResponse);
+      setTimeout(() => {
+        reject(new Error('Timeout'));
+      }, waitResponse);
       deferred.promise
         .then((data: any) => {
           if (data && data.type === 'error' && data.code) {
@@ -73,9 +79,9 @@ export class ElectronRouterService {
 
   private listenMessage() {
     ipcRenderer?.on('post', async (event: any, id: any, cmd: any, body: any) => {
-      console.debug(`get  message: ┣ ${cmd} ┫`, body, id);
+      console.debug(`response: ┣ ${cmd} ┫`, body, id);
       if (cmd === 'world') {
-        console.info('client response world');
+        console.info('client response world', id);
         clearInterval(this.helloInterval);
         this.connectedDeferred.resolve();
         return;
@@ -90,13 +96,20 @@ export class ElectronRouterService {
       try {
         if (this.handles[cmd]) {
           const result = await this.handles[cmd](body);
-          event.sender.send('post', id, cmd, result);
+          if (result !== false && body.type !== 'error') {
+            event.sender.send('post', id, cmd, result);
+          }
           return;
         }
 
         throw new Error('not found');
       } catch (e) {
-        console.warn(e);
+        console.warn(e, id);
+
+        if (body && body.type === 'error') {
+          console.warn(body.code, id);
+          return;
+        }
         event.sender.send('post', id, cmd, { error: 'unknown', code: 'unknown' });
       }
     });

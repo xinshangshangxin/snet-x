@@ -25,31 +25,35 @@ export class HomeComponent implements OnInit, OnDestroy {
         startWith(null),
         debounceTime(200),
         map((redirect) => {
-          if (redirect === 'init') {
-            return {
-              commands: ['/stepper'],
-            };
+          switch (redirect) {
+            case 'init':
+              return '/stepper';
+            case 'password':
+              return '/password';
+            case 'ss-config':
+              return ['/ss-detail'];
+            case 'ip':
+              return ['/ip-check'];
+            case 'domain':
+              return ['/domain-check'];
+            default:
+              return undefined;
+          }
+        }),
+        map((v?: string | string[] | { commands?: string[]; extras?: any }) => {
+          if (v === undefined) {
+            return { commands: undefined, extras: undefined };
           }
 
-          if (redirect === 'password') {
-            return {
-              commands: ['/password'],
-            };
+          if (typeof v === 'string') {
+            return { commands: [v], extras: undefined };
           }
 
-          if (redirect === 'setting') {
-            return {
-              commands: undefined,
-            };
+          if (Array.isArray(v)) {
+            return { commands: v, extras: undefined };
           }
 
-          if (redirect === 'ss-config') {
-            return {
-              commands: ['/ss-detail'],
-            };
-          }
-
-          return { commands: undefined, extras: undefined };
+          return v;
         }),
         untilDestroyed(this)
       )

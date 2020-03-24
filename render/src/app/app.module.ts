@@ -17,6 +17,7 @@ import { IpCheckComponent } from './modules/ip-check/ip-check.component';
 import { PasswordComponent } from './modules/password/password.component';
 import { StepperComponent } from './modules/stepper/stepper.component';
 import { ShareModule } from './share/share.module';
+import { VersionComponent } from './modules/version/version.component';
 
 @NgModule({
   entryComponents: [],
@@ -34,6 +35,7 @@ import { ShareModule } from './share/share.module';
     DomainCheckComponent,
     ConfigSsListComponent,
     StepperComponent,
+    VersionComponent,
   ],
   imports: [CoreModule, ShareModule, AppRoutingModule],
   providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }],

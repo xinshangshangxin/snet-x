@@ -1,0 +1,39 @@
+<div class="header">
+  <h1>版本信息</h1>
+</div>
+
+<mat-card class="version">
+  <div class="row">
+    <div class="left">SnetX版本</div>
+    <div class="right">{{ version?.ui }}</div>
+  </div>
+  <div class="row">
+    <div class="left">Snet Core 版本</div>
+    <div class="right">{{ version?.core }}</div>
+  </div>
+  <div class="row">
+    <div class="left">Snet Core 最新版本</div>
+    <div class="right">{{ updateStatus?.latest }}</div>
+  </div>
+</mat-card>
+
+<mat-progress-bar *ngIf="isDownloading" mode="determinate" [value]="progress"></mat-progress-bar>
+
+<div class="bottom">
+  <button
+    [disabled]="isUpdateLoading"
+    [class.loading-spinner]="isUpdateLoading"
+    mat-raised-button
+    (click)="checkUpdate()"
+  >
+    检测Core
+  </button>
+
+  <button *ngIf="updateStatus?.update" mat-raised-button (click)="update()">
+    下载最新Core
+  </button>
+
+  <button [routerLink]="['/dashboard']" mat-raised-button>
+    返回
+  </button>
+</div>

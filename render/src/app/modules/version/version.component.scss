@@ -1,0 +1,41 @@
+:host {
+    width: 100%;
+    margin: 100px 50px 0 30px;
+}
+
+.header {
+    width: 100%;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.version {
+    font-size: 16px;
+
+    flex-direction: column;
+    justify-content: center;
+}
+
+.row {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 12px;
+
+    .left,
+    .right {
+        flex: 0 0 50%;
+        overflow: hidden;
+    }
+}
+
+mat-progress-bar {
+    margin-top: 20px;
+}
+
+.bottom {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+}

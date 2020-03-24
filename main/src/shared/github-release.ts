@@ -123,9 +123,13 @@ export class GithubRelease {
           timeout: {
             lookup: 3 * 1000,
             connect: 3 * 1000,
+            secureConnect: 3 * 1000,
+            socket: 3 * 1000,
+            response: 30 * 1000,
             send: 10 * 1000,
             request: 30 * 1000,
           },
+          retry: 0,
         });
 
         stream.on('downloadProgress', (progress: Omit<DownloadProgress, 'type'>) => {

@@ -40,8 +40,9 @@ class Core {
   }
 
   public async checkPath(): Promise<string> {
-    const { snetPath } = await getStatus();
+    const { snetPath, snetVersion } = await getStatus();
     this.snetPath = snetPath || '';
+    this.snetVersion = snetVersion || '';
 
     const isExists = await exists(this.snetPath);
 

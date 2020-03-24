@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ElectronRouterService } from '../../core/services/electron-router.service';
 import { ElectronService } from '../../core/services/electron.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { LoadingDialogService } from '../../loading-dialog/loading-dialog.service';
 
 type ConfigMenu = { title: string; intro: string; icon: string } & (
   | { navigate?: string[] | { commands: string[]; extras: any }; action: Function }
@@ -63,8 +64,10 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       intro: '打开日志目录文件夹',
       icon: 'insert_drive_file',
       action: async () => {
-        this.notificationService.open('打开中, 请稍后...');
+        this.notificationService.open('打开文件夹中, 请稍等');
+        this.loadingDialogService.start({ message: '打开中...' });
         await this.electronRouter.post('log:open');
+        this.loadingDialogService.stop();
       },
     },
     {
@@ -87,6 +90,12 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       intro: '检测该域名解析的IP是否会为国内直连',
       navigate: ['/domain-check'],
       icon: 'domain',
+    },
+    {
+      title: '更新检测',
+      intro: '更新snet core, 即更新内核, 而不是界面',
+      icon: 'update',
+      navigate: ['/version'],
     },
   ];
 
@@ -137,7 +146,8 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
   constructor(
     private readonly router: Router,
     private readonly electronRouter: ElectronRouterService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly loadingDialogService: LoadingDialogService
   ) {
     this.showMenu = {
       type: 'config',
@@ -160,7 +170,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
   public menuAction(menuItem: ConfigMenu) {
     console.info('action: ', menuItem);
     if (menuItem.action) {
-      menuItem.action();
+      this.wrapAction(menuItem.action.bind(menuItem))();
     } else if (menuItem.navigate) {
       if (Array.isArray(menuItem.navigate)) {
         this.router.navigate(menuItem.navigate);
@@ -312,5 +322,18 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
     setTimeout(() => {
       this.myInput?.nativeElement.focus();
     }, 500);
+  }
+
+  private wrapAction(fn: Function) {
+    return (...args: any[]) => {
+      return Promise.resolve()
+        .then(() => {
+          return fn(...args);
+        })
+        .catch((e) => {
+          console.warn(e);
+          this.notificationService.open((e && e.message) || '未知错误');
+        });
+    };
   }
 }

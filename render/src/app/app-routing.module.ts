@@ -9,6 +9,7 @@ import { HomeComponent } from './modules/home/home.component';
 import { IpCheckComponent } from './modules/ip-check/ip-check.component';
 import { PasswordComponent } from './modules/password/password.component';
 import { StepperComponent } from './modules/stepper/stepper.component';
+import { VersionComponent } from './modules/version/version.component';
 
 const routes: Routes = [
   {
@@ -46,6 +47,10 @@ const routes: Routes = [
       {
         path: 'domain-check',
         component: DomainCheckComponent,
+      },
+      {
+        path: 'version',
+        component: VersionComponent,
       },
     ],
   },
