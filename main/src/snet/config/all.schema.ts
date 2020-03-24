@@ -46,7 +46,7 @@ function getSchema(name = `配置 ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`) {
           type: 'input',
           inputType: 'number',
           label: '代理超时时间',
-          default: 3,
+          default: 60,
         },
 
         'ss-host': {
