@@ -4,6 +4,7 @@ import got from 'got';
 import { ProxyStream } from 'got/dist/source/as-stream';
 import { resolve } from 'path';
 import { Observable } from 'rxjs';
+import { timeout, catchError } from 'rxjs/operators';
 import { pipeline } from 'stream';
 import { promisify } from 'util';
 
@@ -125,9 +126,6 @@ export class GithubRelease {
             connect: 3 * 1000,
             secureConnect: 3 * 1000,
             socket: 3 * 1000,
-            response: 30 * 1000,
-            send: 10 * 1000,
-            request: 30 * 1000,
           },
           retry: 0,
         });
@@ -141,7 +139,6 @@ export class GithubRelease {
         });
 
         stream.on('error', (e) => {
-          console.warn(e);
           observer.error(e);
         });
 
@@ -152,14 +149,22 @@ export class GithubRelease {
         observer.next({ bin, version, type: 'complete' });
         observer.complete();
       })().catch((e) => {
-        console.warn(e);
         observer.error(e);
       });
 
       return () => {
         stream?.destroy();
+        stream = undefined;
       };
-    });
+    }).pipe(
+      timeout(30 * 1000),
+      catchError((e) => {
+        console.warn(e);
+        stream?.destroy();
+        stream = undefined;
+        throw e;
+      })
+    );
   }
 
   private async downloadToVersionDir({ version, downloadUrl }: ReleaseInfo) {

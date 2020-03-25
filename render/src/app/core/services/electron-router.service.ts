@@ -108,9 +108,8 @@ export class ElectronRouterService {
 
         if (body && body.type === 'error') {
           console.warn(body.code, id);
-          return;
         }
-        event.sender.send('post', id, cmd, { error: 'unknown', code: 'unknown' });
+        // event.sender.send('post', id, cmd, { error: 'unknown', code: 'unknown' });
       }
     });
   }

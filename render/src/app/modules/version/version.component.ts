@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, NgZone } from '@angular/core';
 
 import { ElectronRouterService } from '../../core/services/electron-router.service';
 import { NotificationService } from '../../core/services/notification.service';
@@ -38,21 +38,30 @@ export class VersionComponent implements OnInit, OnDestroy {
     bin: string;
   }[];
 
-  public progress = 0;
+  public progress?: number;
 
   public updateStatus?: UpdateStatus;
 
   constructor(
     private readonly electronRouter: ElectronRouterService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly ngZone: NgZone
   ) {}
 
   public async ngOnInit() {
     await this.load();
+
+    this.electronRouter.register(notifyId, async (result: any) => {
+      this.ngZone.run(() => {
+        this.resolveUpdate(result);
+      });
+
+      return false;
+    });
   }
 
   public get isDownloading() {
-    return this.updateStatus?.update && this.progress !== 0;
+    return this.updateStatus?.update && this.progress !== undefined;
   }
 
   public async checkUpdate() {
@@ -70,34 +79,10 @@ export class VersionComponent implements OnInit, OnDestroy {
   }
 
   public async update() {
-    this.unregisterRouter();
-
-    this.electronRouter.register(notifyId, async (result: any) => {
-      console.info(result);
-
-      switch (result.type) {
-        case 'complete':
-          this.notificationService.open(`更新成功 ${result.version}`);
-          this.progress = 0;
-          await this.electronRouter.post('snet:set-version', result);
-          this.load();
-          break;
-        case 'progress':
-          this.progress = result.percent * 100;
-          break;
-        case 'error':
-          this.notificationService.open(result.message);
-          break;
-        default:
-          console.info(result.type);
-      }
-
-      return false;
-    });
-
     this.notificationService.open('查询中...');
     await this.electronRouter.post('snet:update', { notifyId, checkIsFQ: false });
     this.notificationService.open('下载中...');
+    this.progress = 0;
   }
 
   private unregisterRouter() {
@@ -114,5 +99,25 @@ export class VersionComponent implements OnInit, OnDestroy {
 
   private async load() {
     await Promise.all([this.getVersion(), this.checkUpdate(), this.list()]);
+  }
+
+  private async resolveUpdate(result: any) {
+    switch (result.type) {
+      case 'complete':
+        this.notificationService.open(`更新成功 ${result.version}`);
+        this.progress = undefined;
+        await this.electronRouter.post('snet:set-version', result);
+        this.load();
+        break;
+      case 'progress':
+        this.progress = result.percent * 100;
+        break;
+      case 'error':
+        this.progress = undefined;
+        this.notificationService.open(result.message);
+        break;
+      default:
+        console.info(result.type);
+    }
   }
 }
