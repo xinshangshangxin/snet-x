@@ -60,20 +60,9 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       icon: 'build',
     },
     {
-      title: '日志目录',
-      intro: '打开日志目录文件夹',
-      icon: 'insert_drive_file',
-      action: async () => {
-        this.notificationService.open('打开文件夹中, 请稍等');
-        this.loadingDialogService.start({ message: '打开中...' });
-        await this.electronRouter.post('log:open');
-        this.loadingDialogService.stop();
-      },
-    },
-    {
       title: '停止重置',
       intro: '清空路由规则DNS缓存. 出现无法访问国内网站, 可尝试此按钮',
-      icon: 'clear_all',
+      icon: 'pan_tool',
       action: async () => {
         await this.electronRouter.post('snet:clear');
         this.notificationService.open('清空路由和DNS已执行');
@@ -97,6 +86,30 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       icon: 'update',
       navigate: ['/version'],
     },
+    {
+      title: '日志目录',
+      intro: '打开日志目录文件夹, 用于查看/上报日志',
+      icon: 'insert_drive_file',
+      action: async () => {
+        await this.openLogDir();
+      },
+    },
+    {
+      title: '数据目录',
+      intro: '打开数据存储目录文件夹, 用于备份',
+      icon: 'storage',
+      action: async () => {
+        await this.openDBDir();
+      },
+    },
+    {
+      title: '退出',
+      intro: '停止代理, 退出 snet, 退出SnetX',
+      icon: 'exit_to_app',
+      action: async () => {
+        await this.electronRouter.post('exit:all');
+      },
+    },
   ];
 
   public menus: ConfigMenu[] = [];
@@ -114,7 +127,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
 
   private commands = [
     {
-      keys: ['h', 'help'],
+      keys: ['h', 'help', '帮助', '文档', '帮助文档'],
       message: '查看帮助文档',
       action: () => {
         ElectronService.open('https://github.com/xinshangshangxin/snet-x');
@@ -128,17 +141,38 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       },
     },
     {
-      keys: ['password'],
+      keys: ['password', '密码'],
       message: '设置 sudo 密码',
       action: () => {
         this.router.navigate(['/password']);
       },
     },
     {
-      keys: ['stepper', 'init'],
+      keys: ['stepper', 'init', '初始化', '向导', '初始化向导'],
       message: '初始化向导',
       action: () => {
         this.router.navigate(['/stepper']);
+      },
+    },
+    {
+      keys: ['log', '日志'],
+      message: '打开日志目录文件夹, 用于查看/上报日志',
+      action: async () => {
+        await this.openLogDir();
+      },
+    },
+    {
+      keys: ['db', '存储', '数据'],
+      message: '打开数据存储目录文件夹, 用于备份',
+      action: async () => {
+        await this.openDBDir();
+      },
+    },
+    {
+      keys: ['exit', 'quit'],
+      message: '停止代理, 退出 snet, 退出SnetX',
+      action: async () => {
+        await this.electronRouter.post('exit:all');
       },
     },
   ];
@@ -335,5 +369,19 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
           this.notificationService.open((e && e.message) || '未知错误');
         });
     };
+  }
+
+  private async openDBDir() {
+    this.notificationService.open('打开文件夹中, 请稍等');
+    this.loadingDialogService.start({ message: '打开中...' });
+    await this.electronRouter.post('db:open');
+    this.loadingDialogService.stop();
+  }
+
+  private async openLogDir() {
+    this.notificationService.open('打开文件夹中, 请稍等');
+    this.loadingDialogService.start({ message: '打开中...' });
+    await this.electronRouter.post('log:open');
+    this.loadingDialogService.stop();
   }
 }

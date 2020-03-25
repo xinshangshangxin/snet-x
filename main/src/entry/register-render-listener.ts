@@ -1,3 +1,4 @@
+import { app } from 'electron';
 import { isNaN, toPairs } from 'lodash';
 import { throttleTime } from 'rxjs/operators';
 
@@ -14,7 +15,7 @@ import {
   saveSnetConfig,
   saveStatus,
 } from '../storage';
-import { logsDir } from '../storage/store-path';
+import { dbDir, logsDir } from '../storage/store-path';
 import { NetCheck, netCheck } from '../utils/net-check';
 import { checkPermissionIsInvalid } from './check-permission';
 import { instance } from './instance';
@@ -100,6 +101,9 @@ const routers: RouterMap = {
   'log:open': () => {
     return exec(`open "${logsDir}"`);
   },
+  'db:open': () => {
+    return exec(`open "${dbDir}"`);
+  },
   'snet:start': async () => {
     await instance.snet.startup();
     await instance.snet.start({ notify: true });
@@ -159,6 +163,9 @@ const routers: RouterMap = {
     const { win } = instance;
     const url = await getScreenQRCode(win);
     return url;
+  },
+  'exit:all': () => {
+    app.quit();
   },
 };
 
