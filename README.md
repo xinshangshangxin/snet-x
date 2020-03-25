@@ -84,9 +84,10 @@
 - [x] 二维码扫描
 - [x] 退出后重新打开 "Attempting to call a function in a renderer window that has been closed or released."
 - [x] cmd+q 拦截
-- [ ] 菜单: 数据存储目录(nedb)
-- [ ] 菜单可快捷配置翻墙模式: 1.全局翻墙 2. 国内直连 3. 继承配置设置
-- [ ] 更新 snet, 包含手动选择 snet 路径, 内置自动更新, 内置手动下载
+- [x] 菜单: 数据存储目录(nedb)
+- [x] 菜单可快捷配置翻墙模式: 1.全局翻墙 2. 国内直连 3. 继承配置设置
+- [x] 更新 snet, 内置检测更新并下载
+- [ ] 手动选择外部 snet 路径
 - [ ] 导入导出备份
 - [x] 打开设置页面 loading 动画处理
 - [x] 交互 loading 动画处理(ip 检测, 二维码扫描)
