@@ -11,10 +11,10 @@ async function checkPermissionIsInvalid() {
     await snet.checkPath();
 
     // tray 设置
-    snet.tray.setPermission(true);
+    snet.tray.changePermission(true);
     return false;
   } catch (e) {
-    snet.tray.setPermission(false);
+    snet.tray.changePermission(false);
 
     return e;
   }

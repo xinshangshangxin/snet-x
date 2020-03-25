@@ -22,10 +22,22 @@ export interface ClickData {
   type: MenuType;
   id?: string;
   config?: SnetConfig;
+  proxyMode?: boolean;
 }
 
 export interface ConfigClickData extends ClickData {
   config: SnetConfig;
+}
+
+export interface ProxyModeClickData extends ClickData {
+  proxyMode: true;
+  id: 'bypassCN' | 'global' | 'inherit';
+}
+
+interface TrayStatus {
+  configId?: string;
+  proxyMode?: string;
+  permissionValid?: boolean;
 }
 
 class SnetTray {
@@ -33,7 +45,11 @@ class SnetTray {
 
   public contextMenu?: Menu;
 
-  public menuClickSubject = new Subject<ClickData | ConfigClickData>();
+  public menuClickSubject = new Subject<ClickData | ConfigClickData | ProxyModeClickData>();
+
+  private status: TrayStatus = {
+    proxyMode: 'bypassCN',
+  };
 
   private trayImages = this.getTrayImage();
 
@@ -41,9 +57,51 @@ class SnetTray {
     this.tray = new Tray(this.trayImages.stopped);
   }
 
-  public async startup() {
-    this.contextMenu = await this.buildMenu(false);
+  public async startup({ configId, proxyMode }: TrayStatus = {}) {
+    if (configId) {
+      this.status.configId = configId;
+    }
+
+    if (proxyMode) {
+      this.status.proxyMode = proxyMode;
+    }
+
+    this.rebuildMenu();
+  }
+
+  public async rebuildMenu() {
+    this.contextMenu = await this.buildMenu();
+    this.changePermission(this.status.permissionValid);
+
     this.tray.setContextMenu(this.contextMenu);
+  }
+
+  public changePermission(permissionValid = false) {
+    if (!this.contextMenu) {
+      throw new Errors.NotStartupTray();
+    }
+
+    this.status.permissionValid = permissionValid;
+
+    /* eslint-disable no-param-reassign */
+    const alwaysEnabledIds = ['log', 'nedb', 'setting', 'quit'];
+
+    this.contextMenu.items.forEach((item) => {
+      if (permissionValid) {
+        if (item.id === 'permission') {
+          item.visible = false;
+        } else {
+          item.enabled = true;
+        }
+      } else if (item.id === 'permission') {
+        item.enabled = true;
+      } else if (alwaysEnabledIds.includes(item.id)) {
+        item.enabled = true;
+      } else {
+        item.enabled = false;
+      }
+    });
+    /* eslint-enable */
   }
 
   public changeStatus(status: 'start' | 'stop', configId?: string) {
@@ -71,11 +129,6 @@ class SnetTray {
     }
   }
 
-  public async setPermission(valid: boolean) {
-    this.contextMenu = await this.buildMenu(valid);
-    this.tray.setContextMenu(this.contextMenu);
-  }
-
   // eslint-disable-next-line class-methods-use-this
   private getTrayImage() {
     console.info('nativeTheme.shouldUseDarkColors: ', nativeTheme.shouldUseDarkColors);
@@ -92,7 +145,30 @@ class SnetTray {
     };
   }
 
-  private async buildMenu(permissionValid: boolean) {
+  private addMenuClick(menuTemplate: any[]) {
+    return menuTemplate.map((item: any) => {
+      if ((item as any).click) {
+        return item;
+      }
+
+      return {
+        ...item,
+        click: (menuItem: MenuItem, browserWindow: BrowserWindow, event: KeyboardEvent) => {
+          this.menuClickSubject.next({
+            menuItem,
+            browserWindow,
+            event,
+            type: item.type,
+            id: item.id,
+            config: (item as any).config,
+            proxyMode: (item as any).proxyMode,
+          });
+        },
+      };
+    });
+  }
+
+  private async buildMenu() {
     const configs = await listSnetConfig();
 
     const configList = map(configs, (config) => {
@@ -117,8 +193,27 @@ class SnetTray {
       },
       { label: '停止', type: MenuType.normal, id: 'stop', visible: false },
       { type: MenuType.separator },
+      {
+        label: '国内直连',
+        type: MenuType.radio,
+        id: 'bypassCN',
+        proxyMode: true,
+      },
+      {
+        label: '全局翻墙',
+        type: MenuType.radio,
+        id: 'global',
+        proxyMode: true,
+      },
+      {
+        label: '继承配置',
+        type: MenuType.radio,
+        id: 'inherit',
+        proxyMode: true,
+      },
+      { type: MenuType.separator, start: 'config' },
       ...configList,
-      { type: MenuType.separator },
+      { type: MenuType.separator, start: 'tools', end: 'config' },
       {
         label: 'IP检测',
         type: MenuType.normal,
@@ -149,45 +244,25 @@ class SnetTray {
       { label: '退出', role: 'quit', type: MenuType.normal, id: 'quit' },
     ];
 
-    const alwaysEnabledIds = ['ip', 'log', 'setting', 'quit'];
+    const menu = Menu.buildFromTemplate(this.addMenuClick(menuTemplate));
 
-    return Menu.buildFromTemplate(
-      menuTemplate.map((item: any) => {
-        /* eslint-disable no-param-reassign */
-        if (permissionValid) {
-          if (item.id === 'permission') {
-            item.visible = false;
-          } else {
-            item.enabled = true;
-          }
-        } else if (item.id === 'permission') {
-          item.enabled = true;
-        } else if (alwaysEnabledIds.includes(item.id)) {
-          item.enabled = true;
-        } else {
-          item.enabled = false;
-        }
-        /* eslint-enable */
+    if (this.status.configId) {
+      const configMenu = menu.getMenuItemById(this.status.configId);
 
-        if ((item as any).click) {
-          return item;
-        }
+      if (configMenu) {
+        configMenu.checked = true;
+      }
+    }
 
-        return {
-          ...item,
-          click: (menuItem, browserWindow, event) => {
-            this.menuClickSubject.next({
-              menuItem,
-              browserWindow,
-              event,
-              type: item.type,
-              id: item.id,
-              config: (item as any).config,
-            });
-          },
-        };
-      })
-    );
+    if (this.status.proxyMode) {
+      const configMenu = menu.getMenuItemById(this.status.proxyMode);
+
+      if (configMenu) {
+        configMenu.checked = true;
+      }
+    }
+
+    return menu;
   }
 }
 

@@ -12,9 +12,10 @@ async function ready() {
   await initDatabase();
 
   const { snet } = instance;
+  const status = await getStatus();
 
   // tray 构建
-  await snet.tray.startup();
+  await snet.tray.startup(status);
   addTray();
 
   if (isDev) {
@@ -22,8 +23,7 @@ async function ready() {
   }
 
   // 检查是否初始化过
-  const { inited } = await getStatus();
-  if (!inited) {
+  if (!status.inited) {
     instance.redirectSubject.next('init');
     showWindow();
 

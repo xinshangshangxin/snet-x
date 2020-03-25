@@ -2,15 +2,21 @@ import { from, of } from 'rxjs';
 import { catchError, filter, switchMap } from 'rxjs/operators';
 
 import { exec } from '../shared/shell/exec';
-import { ClickData, ConfigClickData } from '../snet/tray';
+import { ClickData, ConfigClickData, ProxyModeClickData } from '../snet/tray';
+import { saveStatus } from '../storage';
 import { dbDir, logsDir } from '../storage/store-path';
 import { dealPermission } from './deal-permission';
 import { instance } from './instance';
 import { showWindow } from './show-window';
 import { startWithCheckConfig } from './start-snet';
 
-async function resolveClick({ id, config, menuItem }: ClickData | ConfigClickData) {
-  console.debug('menu click', { id, configId: config?._id });
+async function resolveClick({
+  id,
+  config,
+  menuItem,
+  proxyMode,
+}: ClickData | ConfigClickData | ProxyModeClickData) {
+  console.debug('menu click', { id, configId: config?._id, proxyMode });
   switch (id) {
     case 'start':
       await startWithCheckConfig();
@@ -30,6 +36,17 @@ async function resolveClick({ id, config, menuItem }: ClickData | ConfigClickDat
       return showWindow();
     default:
       break;
+  }
+
+  if (proxyMode) {
+    await saveStatus({ proxyMode: id as any });
+    // eslint-disable-next-line no-param-reassign
+    menuItem.checked = true;
+
+    // 切换配置
+    await instance.snet.stop({ persistStatus: false, notify: false, cleanPf: true });
+    await instance.snet.start({ notify: false });
+    return null;
   }
 
   if (!config) {

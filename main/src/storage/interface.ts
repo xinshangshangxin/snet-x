@@ -3,6 +3,7 @@ export interface Status {
   configId?: string;
   snetPath?: string;
   snetVersion?: string;
+  proxyMode?: 'bypassCN' | 'global' | 'inherit';
   running?: boolean;
   inited?: boolean;
 }

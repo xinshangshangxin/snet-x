@@ -32,6 +32,9 @@ const StatusModel = nmdb.model<Status>('Status', {
   snetVersion: {
     type: 'string',
   },
+  proxyMode: {
+    type: 'string',
+  },
   running: {
     type: 'boolean',
   },

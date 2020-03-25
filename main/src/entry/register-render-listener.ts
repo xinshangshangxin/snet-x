@@ -50,13 +50,18 @@ const routers: RouterMap = {
 
     const { snet } = instance;
 
+    // 新增配置
+    if (!inputId) {
+      await snet?.tray.rebuildMenu();
+    }
+
     const invalid = await checkPermissionIsInvalid();
     if (!invalid) {
       const status = await getStatus();
 
       if (status && status.configId === inputId && snet.isRunning) {
         await snet.stop({ notify: false });
-        await snet.start({ notify: true, configId: inputId });
+        await snet.start({ notify: false, configId: inputId });
       }
     }
   },
@@ -64,9 +69,10 @@ const routers: RouterMap = {
   'config:get': getSnetConfig,
   'config:remove': async (body: string) => {
     if (!body) {
-      return null;
+      return;
     }
-    return removeSnetConfig(body);
+    await removeSnetConfig(body);
+    await instance.snet?.tray.rebuildMenu();
   },
   'password:set': async (body: string) => {
     if (instance.snet.isRunning) {

@@ -13,7 +13,7 @@ async function dealPermission(): Promise<false | OperationalError> {
   }
 
   console.warn(e);
-  snet.tray.setPermission(false);
+  snet.tray.changePermission(false);
 
   if (e instanceof Errors.NoSudoPermission) {
     console.info('need set sudo password');

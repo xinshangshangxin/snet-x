@@ -2,27 +2,43 @@ import { getSnetConfig, getStatus, listSnetConfig } from '../../storage';
 import { SnetConfig } from '../../storage/interface';
 
 async function getConfig(configId?: string): Promise<SnetConfig | null> {
-  let id = configId;
-  console.debug('input configId:', configId);
-  if (!configId) {
-    id = (await getStatus())?.configId;
+  const status = await getStatus();
+  const id = configId || status.configId;
 
-    console.debug('status configId', id);
-  }
+  let config: SnetConfig | null = null;
 
   if (id) {
     console.debug('get configId: ', id);
     try {
-      return getSnetConfig(id);
+      config = await getSnetConfig(id);
     } catch (e) {
       console.warn(e);
     }
   }
 
-  const arr = await listSnetConfig();
+  if (!config) {
+    const arr = await listSnetConfig();
 
-  console.debug('list config: ', arr);
-  return arr[0];
+    console.debug('list config: ', arr);
+    [config] = arr;
+  }
+
+  switch (status.proxyMode) {
+    case 'global':
+      return {
+        ...config,
+        'proxy-scope': 'global',
+      };
+
+    case 'bypassCN':
+      return {
+        ...config,
+        'proxy-scope': 'bypassCN',
+      };
+
+    default:
+      return config;
+  }
 }
 
 export { getConfig };
