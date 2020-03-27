@@ -51,10 +51,8 @@ const routers: RouterMap = {
 
     const { snet } = instance;
 
-    // 新增配置
-    if (!inputId) {
-      await snet?.tray.rebuildMenu();
-    }
+    // 新增或者名称修改才需要, 这边直接对所有情况都更新
+    await snet.tray.rebuildMenu();
 
     const invalid = await checkPermissionIsInvalid();
     if (!invalid) {

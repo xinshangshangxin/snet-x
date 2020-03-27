@@ -83,10 +83,10 @@ class SnetTray {
 
     this.status.permissionValid = permissionValid;
 
-    /* eslint-disable no-param-reassign */
     const alwaysEnabledIds = ['log', 'nedb', 'setting', 'quit'];
 
     this.contextMenu.items.forEach((item) => {
+      /* eslint-disable no-param-reassign */
       if (permissionValid) {
         if (item.id === 'permission') {
           item.visible = false;
@@ -100,8 +100,8 @@ class SnetTray {
       } else {
         item.enabled = false;
       }
+      /* eslint-enable */
     });
-    /* eslint-enable */
   }
 
   public changeStatus(status: 'start' | 'stop', configId?: string) {
