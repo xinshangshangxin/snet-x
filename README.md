@@ -4,14 +4,16 @@
 
 ## 界面截图
 
-<img width="500" alt="8" src="./assets/1.png">
-<img width="500" alt="8" src="./assets/2.png">
-<img width="500" alt="8" src="./assets/3.png">
-<img width="500" alt="8" src="./assets/4.png">
-<img width="500" alt="8" src="./assets/5.png">
-<img width="500" alt="8" src="./assets/6.png">
-<img width="500" alt="8" src="./assets/7.png">
+<div>
+<img width="450" alt="8" src="./assets/1.png">
+<img width="450" alt="8" src="./assets/2.png">
+<img width="450" alt="8" src="./assets/3.png">
+<img width="450" alt="8" src="./assets/4.png">
+<img width="450" alt="8" src="./assets/5.png">
+<img width="450" alt="8" src="./assets/6.png">
+<img width="450" alt="8" src="./assets/7.png">
 <img width="130" alt="8" src="./assets/8.png">
+</div>
 
 ## 帮助文档
 
