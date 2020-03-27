@@ -2,10 +2,21 @@
 
 一款透明代理(`transparent proxy`)工具[`snet`](https://github.com/monsterxx03/snet) 的 `MacOS`(`OS X`) 可视化界面
 
+## 界面截图
+
+<img width="500" alt="8" src="./assets/1.png">
+<img width="500" alt="8" src="./assets/2.png">
+<img width="500" alt="8" src="./assets/3.png">
+<img width="500" alt="8" src="./assets/4.png">
+<img width="500" alt="8" src="./assets/5.png">
+<img width="500" alt="8" src="./assets/6.png">
+<img width="500" alt="8" src="./assets/7.png">
+<img width="130" alt="8" src="./assets/8.png">
+
 ## 帮助文档
 
 - 配置界面快捷搜索支持 设置项/Shadowsocks 配置搜搜/IP 检测/域名检测/快捷指令等
-  ![search](./assets/2.png)
+  ![search](./assets/0.png)
 
 - 退出 `SnetX` 仅能通过 托盘(`Tray`) 中点击 `退出` 菜单, 使用 `Cmd+Q` 仅仅隐藏配置界面
 
