@@ -14,6 +14,7 @@ import {
   removeSnetConfig,
   saveSnetConfig,
   saveStatus,
+  updateSnetConfigSort,
 } from '../storage';
 import { dbDir, logsDir } from '../storage/store-path';
 import { NetCheck, netCheck } from '../utils/net-check';
@@ -72,6 +73,12 @@ const routers: RouterMap = {
     }
     await removeSnetConfig(body);
     await instance.snet?.tray.rebuildMenu();
+  },
+  'config:order': async (body: { _id: string; order: number }[]) => {
+    await updateSnetConfigSort(body);
+
+    const { snet } = instance;
+    await snet.tray.rebuildMenu();
   },
   'password:set': async (body: string) => {
     if (instance.snet.isRunning) {

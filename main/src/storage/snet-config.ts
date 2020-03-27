@@ -40,7 +40,7 @@ async function get(_id: string) {
 }
 
 async function list(query: { [key: string]: any } = {}) {
-  const arr = await SnetConfigModel.find(query);
+  const arr = await SnetConfigModel.find(query, { sort: { order: 1 } });
 
   return Promise.all(
     arr.map((item) => {
@@ -50,6 +50,11 @@ async function list(query: { [key: string]: any } = {}) {
 }
 
 async function save(doc: Partial<SnetConfig>) {
+  if (!doc._id) {
+    const item = await SnetConfigModel.findOne({}, { sort: { order: -1 } });
+    // eslint-disable-next-line no-param-reassign
+    doc.order = ((item && item.order) || 999) + 1;
+  }
   return creatOrUpdate(SnetConfigModel, string2int(doc));
 }
 
@@ -57,9 +62,18 @@ async function remove(_id: string) {
   return SnetConfigModel.deleteOne({ _id });
 }
 
+async function updateSort(arr: { _id: string; order: number }[]) {
+  await Promise.all(
+    arr.map(({ _id, order }) => {
+      return SnetConfigModel.updateOne({ _id }, { $set: { order } });
+    })
+  );
+}
+
 export {
   get as getSnetConfig,
   list as listSnetConfig,
   save as saveSnetConfig,
   remove as removeSnetConfig,
+  updateSort as updateSnetConfigSort,
 };

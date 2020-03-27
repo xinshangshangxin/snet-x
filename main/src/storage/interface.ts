@@ -52,6 +52,7 @@ export interface BlacklistConfig {
 export type SnetConfig = {
   _id: string;
   name: string;
+  order: number;
 
   'listen-host': string;
   'listen-port': number;

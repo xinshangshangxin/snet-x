@@ -28,6 +28,7 @@
     "@ngx-loading-bar/core": "^5.0.0-alpha.1",
     "@ngx-loading-bar/router": "^5.0.0-alpha.1",
     "lodash": "^4.17.15",
+    "ng-sortgrid": "^3.0.1",
     "ngx-take-until-destroy": "^5.4.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",

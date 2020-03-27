@@ -48,6 +48,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { LoadingBarModule } from '@ngx-loading-bar/core';
 import { LoadingBarRouterModule } from '@ngx-loading-bar/router';
+import { NgsgModule } from 'ng-sortgrid';
 
 import { LoadingDialogModule } from '../loading-dialog/loading-dialog.module';
 import { ClickStopPropagationDirective } from './click-stop-propagation.directive';
@@ -71,6 +72,8 @@ const modules = [
   LoadingDialogModule,
   LoadingBarModule,
   LoadingBarRouterModule,
+
+  NgsgModule,
 
   A11yModule,
   CdkStepperModule,

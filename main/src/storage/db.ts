@@ -199,6 +199,11 @@ const SnetConfigModel = nmdb.model<SnetConfig>('SnetConfig', {
     type: 'number',
     required: true,
   },
+
+  order: {
+    type: 'number',
+    required: true,
+  },
 });
 
 function creatOrUpdate<T>(Model: IModel<T>, doc: any) {
