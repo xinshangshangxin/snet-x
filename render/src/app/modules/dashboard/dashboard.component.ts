@@ -130,7 +130,9 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       keys: ['h', 'help', '帮助', '文档', '帮助文档'],
       message: '查看帮助文档',
       action: () => {
-        ElectronService.open('https://github.com/xinshangshangxin/snet-x');
+        ElectronService.open(
+          'https://github.com/xinshangshangxin/snet-x#%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3'
+        );
       },
     },
     {
