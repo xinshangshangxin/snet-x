@@ -3,6 +3,7 @@ import { creatOrUpdate, SnetConfigModel, string2int } from './db';
 import { getDNS } from './dns';
 import { SnetConfig } from './interface';
 import { getSS } from './ss';
+import { dnsLogPath } from './store-path';
 
 async function rebuildConfig(
   doc: SnetConfig & { ssId?: string; DNSId?: string; blacklistId?: string }
@@ -28,6 +29,7 @@ async function rebuildConfig(
     ssConfig,
     dnsConfig,
     blacklistConfig,
+    'dns-logging-file': dnsLogPath,
   };
 }
 

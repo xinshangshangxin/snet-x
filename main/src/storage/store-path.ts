@@ -19,6 +19,7 @@ ensureFileSync(snetConfigPath);
 
 export const logsDir = isDev ? devLogDir : app.getPath('logs');
 export const snetLogPath = resolve(logsDir, 'snet.log');
+export const dnsLogPath = resolve(logsDir, 'dns.log');
 
 export const dbDir = resolve(userData, 'nedb');
 
