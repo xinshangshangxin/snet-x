@@ -80,7 +80,7 @@
 2. `git clone https://github.com/xinshangshangxin/snet-x`
 3. 进入`snet-x`, 执行 `npm run start:pre`
 4. 下载 [snet](https://github.com/monsterxx03/snet) `brew install jq && bash .github/shells/download-github-release.sh`
-5. `cd main && npx electron-rebuild` [原文](https://github.com/electron/electron-rebuild#how-does-it-work)
+5. `cd main && npx electron-rebuild --version $(cat package-lock.json | jq '.dependencies.electron.version')` [原文](https://github.com/electron/electron-rebuild#how-does-it-work)
 6. 本地实时预览, 第一个命令窗口: `cd render && npm start`; 第二个命令窗口: `cd main && npm start`, 其中`render`实时刷新, 而 `main` 需要手动重启
 7. 本地构建: `npm run build:local`
 
