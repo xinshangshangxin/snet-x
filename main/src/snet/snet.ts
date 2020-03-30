@@ -1,6 +1,7 @@
 import { createWriteStream, ensureFile, writeJSON } from 'fs-extra';
 import { escapeRegExp } from 'lodash';
 
+import { GithubRelease } from '../shared/github-release';
 import { Errors } from '../shared/project/error';
 import { treeProcessIds } from '../shared/shell/ps-tree';
 import { Signal, sudoRun } from '../shared/shell/sudo-run';
@@ -11,8 +12,9 @@ import { getConfig } from './config';
 import { Core } from './snet-core';
 import { SnetTray } from './tray';
 
+const uiRepo = 'xinshangshangxin/snet-x';
 class Snet extends Core {
-  constructor(public tray = new SnetTray()) {
+  constructor(public tray = new SnetTray(), public snetXRelease = new GithubRelease(uiRepo)) {
     super();
   }
 
@@ -121,6 +123,28 @@ class Snet extends Core {
     if (notify) {
       notifyStopped();
     }
+  }
+
+  public async canUpdate() {
+    const [core, ui] = await Promise.all([this.coreCanUpdate(), this.uiCanUpdate()]);
+
+    return {
+      core,
+      ui,
+    };
+  }
+
+  private async uiCanUpdate() {
+    const release = await this.snetXRelease.getLatestRelease(/\.dmg/i);
+    const latestVersion = release.version;
+    const { ui } = this.version;
+
+    return {
+      version: ui,
+      latest: latestVersion,
+      update: ui !== latestVersion,
+      release,
+    };
   }
 }
 

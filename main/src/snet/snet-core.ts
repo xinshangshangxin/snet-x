@@ -35,7 +35,7 @@ class Core {
     return {
       core: this.snetVersion,
       defaultCore: version.core,
-      ui: version.ui,
+      ui: `v${version.ui}`,
     };
   }
 
@@ -63,40 +63,6 @@ class Core {
 
     console.debug('use snet: ', this.snetPath);
     return this.snetPath;
-  }
-
-  public async canUpdate(): Promise<UpdateStatus> {
-    const release = await this.snetRelease.getLatestRelease();
-    const latestVersion = release.version;
-    const { snetVersion } = await getStatus();
-
-    // 自带版本
-    if (!snetVersion) {
-      return {
-        version: version.core,
-        latest: latestVersion,
-        update: version.core !== latestVersion,
-        release,
-      };
-    }
-
-    // 用户外置路径
-    if (snetVersion === 'custom') {
-      return {
-        version: 'custom',
-        latest: latestVersion,
-        update: false,
-        release,
-      };
-    }
-
-    // 内置下载器下载版本
-    return {
-      version: snetVersion,
-      latest: latestVersion,
-      update: snetVersion !== latestVersion,
-      release,
-    };
   }
 
   public async download(release?: ReleaseInfo) {
@@ -138,6 +104,40 @@ class Core {
       },
       ...arr,
     ];
+  }
+
+  protected async coreCanUpdate(): Promise<UpdateStatus> {
+    const release = await this.snetRelease.getLatestRelease();
+    const latestVersion = release.version;
+    const { snetVersion } = await getStatus();
+
+    // 自带版本
+    if (!snetVersion) {
+      return {
+        version: version.core,
+        latest: latestVersion,
+        update: version.core !== latestVersion,
+        release,
+      };
+    }
+
+    // 用户外置路径
+    if (snetVersion === 'custom') {
+      return {
+        version: 'custom',
+        latest: latestVersion,
+        update: false,
+        release,
+      };
+    }
+
+    // 内置下载器下载版本
+    return {
+      version: snetVersion,
+      latest: latestVersion,
+      update: snetVersion !== latestVersion,
+      release,
+    };
   }
 }
 

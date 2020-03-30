@@ -84,7 +84,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
     },
     {
       title: '更新检测',
-      intro: '更新snet core, 即更新内核, 而不是界面',
+      intro: '检测是否存在更新, 包含 core 和 ui',
       icon: 'update',
       navigate: ['/version'],
     },
@@ -132,9 +132,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       keys: ['h', 'help', '帮助', '文档', '帮助文档'],
       message: '查看帮助文档',
       action: () => {
-        ElectronService.open(
-          'https://github.com/xinshangshangxin/snet-x#qa'
-        );
+        ElectronService.open('https://github.com/xinshangshangxin/snet-x#qa');
       },
     },
     {

@@ -124,16 +124,16 @@ const routers: RouterMap = {
     const { snet } = instance;
     return snet?.version;
   },
-  'snet:list': async () => {
-    const { snet } = instance;
-    return snet?.list();
-  },
   'snet:can-update': async () => {
     const { snet } = instance;
 
     return snet?.canUpdate();
   },
-  'snet:update': async ({ notifyId, checkIsFQ } = {}) => {
+  'snet-core:list': async () => {
+    const { snet } = instance;
+    return snet?.list();
+  },
+  'snet-core:update': async ({ notifyId, checkIsFQ } = {}) => {
     const { router, snet } = instance;
 
     if (checkIsFQ) {
@@ -158,7 +158,7 @@ const routers: RouterMap = {
       }
     );
   },
-  'snet:set-version': async ({ bin, version } = {}) => {
+  'snet-core:set-version': async ({ bin, version } = {}) => {
     await saveStatus({ snetPath: bin, snetVersion: version });
 
     const { snet } = instance;

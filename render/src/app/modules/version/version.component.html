@@ -4,16 +4,20 @@
 
 <mat-card class="version">
   <div class="row">
-    <div class="left">SnetX版本</div>
+    <div class="left">SnetX 当前版本</div>
     <div class="right">{{ version?.ui }}</div>
   </div>
   <div class="row">
-    <div class="left">Snet Core 版本</div>
+    <div class="left">SnetX 最新版本</div>
+    <div class="right">{{ updateStatus?.ui.latest }}</div>
+  </div>
+  <div class="row">
+    <div class="left">Snet Core 当前版本</div>
     <div class="right">{{ version?.core }}</div>
   </div>
   <div class="row">
     <div class="left">Snet Core 最新版本</div>
-    <div class="right">{{ updateStatus?.latest }}</div>
+    <div class="right">{{ updateStatus?.core.latest }}</div>
   </div>
 </mat-card>
 
@@ -29,8 +33,12 @@
     检测Core
   </button>
 
-  <button *ngIf="updateStatus?.update" mat-raised-button (click)="update()">
+  <button *ngIf="updateStatus?.core.update" mat-raised-button (click)="update()">
     下载最新Core
+  </button>
+
+  <button *ngIf="updateStatus?.ui.update" mat-raised-button (click)="openUiDownloadUrl()">
+    下载最新UI
   </button>
 
   <button [routerLink]="['/dashboard']" mat-raised-button>

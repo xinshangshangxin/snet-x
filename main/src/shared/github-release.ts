@@ -48,12 +48,12 @@ export class GithubRelease {
     return version;
   }
 
-  public async getLatestRelease(): Promise<ReleaseInfo> {
+  public async getLatestRelease(matchRegexp = /darwin/i): Promise<ReleaseInfo> {
     console.debug('getLatestAsset');
     const { tag_name: version, assets } = await got(this.releaseInfoUrl).json();
 
     const asset = assets.find((item: any) => {
-      return item && /darwin/i.test(item.name);
+      return item && matchRegexp.test(item.name);
     });
 
     if (!asset || !asset.browser_download_url) {

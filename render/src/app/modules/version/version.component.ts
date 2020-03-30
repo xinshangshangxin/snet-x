@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, NgZone } from '@angular/core';
 
 import { ElectronRouterService } from '../../core/services/electron-router.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { ElectronService } from '../../core/services/electron.service';
 
 interface ReleaseInfo {
   version: string;
@@ -40,7 +41,7 @@ export class VersionComponent implements OnInit, OnDestroy {
 
   public progress?: number;
 
-  public updateStatus?: UpdateStatus;
+  public updateStatus?: { core: UpdateStatus; ui: UpdateStatus };
 
   constructor(
     private readonly electronRouter: ElectronRouterService,
@@ -61,15 +62,17 @@ export class VersionComponent implements OnInit, OnDestroy {
   }
 
   public get isDownloading() {
-    return this.updateStatus?.update && this.progress !== undefined;
+    return this.updateStatus?.core.update && this.progress !== undefined;
   }
 
   public async checkUpdate() {
     this.isUpdateLoading = true;
     try {
-      this.updateStatus = await this.electronRouter.post<UpdateStatus>('snet:can-update');
+      this.updateStatus = await this.electronRouter.post('snet:can-update');
     } catch (e) {
       console.warn(e);
+
+      this.notificationService.open('检查最新版本失败, 请稍后再试...');
     }
     this.isUpdateLoading = false;
   }
@@ -80,9 +83,20 @@ export class VersionComponent implements OnInit, OnDestroy {
 
   public async update() {
     this.notificationService.open('查询中...');
-    await this.electronRouter.post('snet:update', { notifyId, checkIsFQ: false });
+    await this.electronRouter.post('snet-core:update', { notifyId, checkIsFQ: false });
     this.notificationService.open('下载中...');
     this.progress = 0;
+  }
+
+  public async openUiDownloadUrl() {
+    const url = this.updateStatus?.ui.release.downloadUrl;
+    if (!url) {
+      this.notificationService.open('下载失败');
+      return;
+    }
+
+    this.notificationService.open('打开浏览器中...');
+    ElectronService.open(url);
   }
 
   private unregisterRouter() {
@@ -94,7 +108,7 @@ export class VersionComponent implements OnInit, OnDestroy {
   }
 
   private async list() {
-    this.availableList = await this.electronRouter.post('snet:list');
+    this.availableList = await this.electronRouter.post('snet-core:list');
   }
 
   private async load() {
@@ -106,7 +120,7 @@ export class VersionComponent implements OnInit, OnDestroy {
       case 'complete':
         this.notificationService.open(`更新成功 ${result.version}`);
         this.progress = undefined;
-        await this.electronRouter.post('snet:set-version', result);
+        await this.electronRouter.post('snet-core:set-version', result);
         this.load();
         break;
       case 'progress':
