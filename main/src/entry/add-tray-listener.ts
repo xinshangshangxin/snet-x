@@ -1,10 +1,8 @@
 import { from, of } from 'rxjs';
 import { catchError, filter, switchMap } from 'rxjs/operators';
 
-import { exec } from '../shared/shell/exec';
 import { ClickData, ConfigClickData, ProxyModeClickData } from '../snet/tray';
 import { saveStatus } from '../storage';
-import { dbDir, logsDir } from '../storage/store-path';
 import { dealPermission } from './deal-permission';
 import { instance } from './instance';
 import { showWindow } from './show-window';
@@ -23,12 +21,10 @@ async function resolveClick({
       break;
     case 'stop':
       return instance.snet.stop({ persistStatus: true, notify: true });
-    case 'log':
-      return exec(`open "${logsDir}"`);
-    case 'nedb':
-      return exec(`open "${dbDir}"`);
     case 'permission':
       return dealPermission();
+    case 'log':
+    case 'nedb':
     case 'ip':
     case 'domain':
     case 'setting':

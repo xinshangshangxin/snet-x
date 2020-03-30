@@ -1,5 +1,7 @@
 import { AfterViewChecked, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest, from } from 'rxjs';
+import { debounceTime, map, startWith } from 'rxjs/operators';
 
 import { ElectronRouterService } from '../../core/services/electron-router.service';
 import { ElectronService } from '../../core/services/electron.service';
@@ -143,6 +145,13 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       },
     },
     {
+      keys: ['domain'],
+      message: '检测该域名解析的IP是否会为国内直连',
+      action: () => {
+        this.router.navigate(['/domain-check']);
+      },
+    },
+    {
       keys: ['password', '密码'],
       message: '设置 sudo 密码',
       action: () => {
@@ -164,7 +173,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       },
     },
     {
-      keys: ['db', '存储', '数据'],
+      keys: ['db', 'nedb', '存储', '数据'],
       message: '打开数据存储目录文件夹, 用于备份',
       action: async () => {
         await this.openDBDir();
@@ -183,7 +192,8 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
     private readonly router: Router,
     private readonly electronRouter: ElectronRouterService,
     private readonly notificationService: NotificationService,
-    private readonly loadingDialogService: LoadingDialogService
+    private readonly loadingDialogService: LoadingDialogService,
+    private readonly activatedRoute: ActivatedRoute
   ) {
     this.showMenu = {
       type: 'config',
@@ -191,12 +201,30 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
     };
 
     this.ssConfigs = [];
-
-    this.searchAction('');
   }
 
-  public async ngOnInit() {
-    this.ssConfigs = await this.electronRouter.post('config:query');
+  public ngOnInit() {
+    return combineLatest(
+      this.activatedRoute.queryParams.pipe(startWith(null)),
+      from(this.electronRouter.post('config:query'))
+    )
+      .pipe(
+        debounceTime(200),
+        map(([qs, ssConfigs]) => {
+          console.info('qs: ', qs);
+          this.ssConfigs = ssConfigs;
+
+          if (!qs || !qs.search) {
+            this.searchAction('');
+            return;
+          }
+
+          this.searchAction(qs.search);
+          this.enterAction(qs.search);
+          this.searchAction('');
+        })
+      )
+      .subscribe(() => {}, console.warn);
   }
 
   public ngAfterViewChecked() {

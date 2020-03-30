@@ -26,35 +26,52 @@ export class HomeComponent implements OnInit, OnDestroy {
         debounceTime(200),
         map((redirect) => {
           switch (redirect) {
-            case 'init':
-              return '/stepper';
-            case 'password':
-              return '/password';
             case 'ss-config':
               return ['/ss-detail'];
+            case 'init':
+            case 'password':
             case 'ip':
-              return ['/ip-check'];
             case 'domain':
-              return ['/domain-check'];
+            case 'log':
+            case 'nedb':
+              return { search: redirect };
             default:
               return undefined;
           }
         }),
-        map((v?: string | string[] | { commands?: string[]; extras?: any }) => {
-          if (v === undefined) {
-            return { commands: undefined, extras: undefined };
-          }
+        map(
+          (
+            v?:
+              | string
+              | [string]
+              | any[]
+              | { commands?: string[]; extras?: any }
+              | { [key: string]: any; commands?: any }
+          ) => {
+            if (v === undefined) {
+              return { commands: undefined, extras: undefined };
+            }
 
-          if (typeof v === 'string') {
-            return { commands: [v], extras: undefined };
-          }
+            if (typeof v === 'string') {
+              return { commands: [v], extras: undefined };
+            }
 
-          if (Array.isArray(v)) {
-            return { commands: v, extras: undefined };
-          }
+            if (Array.isArray(v)) {
+              return { commands: v, extras: undefined };
+            }
 
-          return v;
-        }),
+            if (!v.commands) {
+              return {
+                commands: ['/'],
+                extras: {
+                  queryParams: v,
+                },
+              };
+            }
+
+            return v;
+          }
+        ),
         untilDestroyed(this)
       )
       .subscribe(({ commands, extras }) => {
