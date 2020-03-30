@@ -1,5 +1,6 @@
 import BB from 'bluebird';
 import got from 'got';
+import iconv from 'iconv-lite';
 
 interface MyIpResult {
   ip: string;
@@ -13,27 +14,6 @@ const curlClient = got.extend({
     'user-agent': 'curl/7.54.0',
   },
 });
-
-async function ipip(): Promise<MyIpResult> {
-  const body = await curlClient('http://myip.ipip.net').text();
-  const arr = body.replace(/(当前\s*)|(IP：)|(来自于：)/g, '').split(/\s+/);
-
-  if (arr && arr.length >= 2) {
-    return {
-      ip: `${arr.shift()}`.trim(),
-      address: arr.join(''),
-      shortAddress:
-        body
-          .trim()
-          .split(/\s+/)
-          .slice(-2)
-          .shift() || '',
-      raw: body,
-    };
-  }
-
-  throw new Error(`ipip no match found, raw: ${body}`);
-}
 
 async function cip(): Promise<MyIpResult> {
   const body = await curlClient('http://cip.cc').text();
@@ -73,30 +53,56 @@ async function ipinfo(): Promise<MyIpResult> {
   return {
     ip: body.ip,
     address: `${body.country || ''} ${body.region || ''} ${body.city || ''} ${body.org || ''}`,
-    shortAddress: `${body.region || body.country || ''} ${body.city || ''}`,
+    shortAddress: `${body.country || body.region || ''} ${body.city || ''}`,
     raw: body,
   };
 }
 
 async function ipapi(): Promise<MyIpResult> {
-  const body = await curlClient('http://ip-api.com/json').json<any>();
+  const body = await curlClient('http://ip-api.com/json', { encoding: 'ascii' }).json<any>();
 
   if (!body.query) {
-    throw new Error(`ipapi no match found, raw: ${body}`);
+    throw new Error(`ipapi no match found, raw: ${JSON.stringify(body)}`);
   }
 
   return {
     ip: body.query,
     address: `${body.country || ''} ${body.city || ''} ${body.org}`,
-    shortAddress: `${body.regionName || body.country || ''} ${body.city || ''}`,
+    shortAddress: `${body.country || body.regionName || ''} ${body.city || ''}`,
     raw: body,
+  };
+}
+
+async function pconline() {
+  const buffer = await curlClient('http://whois.pconline.com.cn/ipJson.jsp?json=true', {
+    responseType: 'buffer',
+  }).buffer();
+
+  const body = iconv.decode(buffer, 'gbk');
+
+  let obj: any;
+  try {
+    obj = JSON.parse(body);
+  } catch (e) {
+    obj = {};
+  }
+
+  if (!obj.ip) {
+    throw new Error(`pconline no match found, raw: ${body}`);
+  }
+
+  return {
+    ip: obj.ip,
+    address: obj.addr,
+    shortAddress: obj.city || obj.addr,
+    raw: obj,
   };
 }
 
 const ipList = [
   {
-    key: 'myip.ipip.net',
-    fun: ipip,
+    key: 'whois.pconline.com.cn',
+    fun: pconline,
     group: 'cn',
   },
   {

@@ -85,6 +85,9 @@ class Snet extends Core {
     if (notify) {
       notifyRunning(config);
     }
+
+    // 清除本地 DNS
+    await sudoRun.runAsync('killall -HUP mDNSResponder');
   }
 
   public async stop({
