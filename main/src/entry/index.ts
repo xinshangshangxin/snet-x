@@ -74,6 +74,8 @@ app.on('before-quit', beforeQuit);
 app.on('window-all-closed', () => {
   instance.win = null;
 
+  app.dock.hide();
+
   if (process.platform !== 'darwin') {
     app.quit();
   }

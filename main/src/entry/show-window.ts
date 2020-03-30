@@ -1,3 +1,5 @@
+import { app } from 'electron';
+
 import { close } from './close';
 import { createRouter } from './create-router';
 import { instance } from './instance';
@@ -20,6 +22,8 @@ function showWindow() {
 
     // 监听 electron 事件
     createRouter();
+
+    app.dock.show();
   } else if (win.isMinimized()) {
     win.restore();
   } else {
