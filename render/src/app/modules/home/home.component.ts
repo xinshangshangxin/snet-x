@@ -32,8 +32,6 @@ export class HomeComponent implements OnInit, OnDestroy {
             case 'password':
             case 'ip':
             case 'domain':
-            case 'log':
-            case 'nedb':
               return { search: redirect };
             default:
               return undefined;

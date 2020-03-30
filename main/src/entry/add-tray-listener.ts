@@ -23,8 +23,6 @@ async function resolveClick({
       return instance.snet.stop({ persistStatus: true, notify: true });
     case 'permission':
       return dealPermission();
-    case 'log':
-    case 'nedb':
     case 'ip':
     case 'domain':
     case 'setting':

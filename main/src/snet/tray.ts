@@ -83,7 +83,7 @@ class SnetTray {
 
     this.status.permissionValid = permissionValid;
 
-    const alwaysEnabledIds = ['log', 'nedb', 'setting', 'quit'];
+    const alwaysEnabledIds = ['setting', 'quit'];
 
     this.contextMenu.items.forEach((item) => {
       /* eslint-disable no-param-reassign */
@@ -223,17 +223,6 @@ class SnetTray {
         label: '域名检测',
         type: MenuType.normal,
         id: 'domain',
-      },
-      { type: MenuType.separator },
-      {
-        label: '日志目录',
-        type: MenuType.normal,
-        id: 'log',
-      },
-      {
-        label: '存储目录',
-        type: MenuType.normal,
-        id: 'nedb',
       },
       {
         label: '设置',

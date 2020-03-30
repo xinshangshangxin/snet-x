@@ -173,7 +173,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       },
     },
     {
-      keys: ['db', 'nedb', '存储', '数据'],
+      keys: ['db', '存储', '数据'],
       message: '打开数据存储目录文件夹, 用于备份',
       action: async () => {
         await this.openDBDir();
