@@ -15,39 +15,28 @@
 <img width="130" alt="8" src="./assets/8.png">
 </div>
 
-## 帮助文档
+## Q&A
 
-- 配置界面快捷搜索支持 设置项/Shadowsocks 配置搜搜/IP 检测/域名检测/快捷指令等
+- 配置界面快捷搜索支持哪些?
+
+  > 包含设置项/Shadowsocks 配置搜搜/IP 检测/域名检测/快捷指令等, 搜索流程如下图
+
   ![search](./assets/0.png)
 
-- 退出 `SnetX` 仅能通过 托盘(`Tray`) 中点击 `退出` 菜单, 使用 `Cmd+Q` 仅仅隐藏配置界面
+- 支持哪些快捷指令(不区分大小写)
 
-- 如遇到无法访问网络, 请点击托盘的 `设置` 打开设置界面, 再点击 `停止重置` 按钮后, 查看是否网络正常
-
-### 支持的快捷指令
-
-- `h/help/帮助/帮助文档`: 打开帮助文档
-- `IP`: 检测本机 IP 地址
-- `password/密码`: 设置 `sudo` 密码
-- `init/初始化`: 初始化向导
-- `log/日志`: 打开日志目录文件夹
-- `db/存储`: 打开数据存储目录文件夹
-- `exit/quit`: 退出
-
-### 网络不正常可能原因
-
-- `SnetX` 崩溃
-- [`snet`](https://github.com/monsterxx03/snet) 有端口冲突
-- 启动多个`SnetX`
-- SS 服务器无法访问
-- 本身网络有异常
-
-## Q&A
+  > - `h/help/帮助/帮助文档`: 打开帮助文档
+  > - `IP`: 检测本机 IP 地址
+  > - `password/密码`: 设置 `sudo` 密码
+  > - `init/初始化`: 初始化向导
+  > - `log/日志`: 打开日志目录文件夹
+  > - `db/存储`: 打开数据存储目录文件夹
+  > - `exit/quit`: 退出
 
 - 为什么需要开机密码(sudo 密码)
 
-  > 1. [`snet`](https://github.com/monsterxx03/snet) 运行本身需要 `sudo` 执行
-  > 2. 停止 [`snet`](https://github.com/monsterxx03/snet) 采用的是 `kill`
+  > - [`snet`](https://github.com/monsterxx03/snet) 运行本身需要 `sudo` 执行
+  > - 停止 [`snet`](https://github.com/monsterxx03/snet) 采用的是 `kill`
 
 - 开机密码(sudo 密码) 存储于哪里?
 
@@ -60,15 +49,23 @@
 
 - 如何退出
 
-  > 退出 `SnetX` 仅能通过 托盘(`Tray`) 中点击 `退出` 菜单, 使用 `Cmd+Q` 仅仅隐藏设置界面
+  > 退出 `SnetX` 仅能通过 托盘(`Tray`) 中点击 `退出` 菜单, 或者设置界面中 退出按钮, 使用 `Cmd+Q` 仅仅隐藏设置界面
 
 - 域名检测如何实现的
 
   > 用 `dig` 解析 IP, 查看 IP 是否为国内 IP, 是则显示直连. [原作者解释](https://github.com/monsterxx03/snet/issues/4#issuecomment-590224681)
 
-- 无法访问网络, 即使退出了 `SnetX`
+- 即使退出了 `SnetX`, 依然无法访问网络
 
   > 请点击托盘的 `设置` 打开设置界面, 再点击 `停止重置` 按钮后, 查看是否网络正常
+
+- 网络不正常可能原因
+
+  > - `SnetX` 崩溃
+  > - [`snet`](https://github.com/monsterxx03/snet) 有端口冲突
+  > - 启动多个`SnetX`
+  > - SS 服务器无法访问
+  > - 本身网络有异常
 
 - 每次打开都要求输入开机密码 / 每次启动失败, 需要设置开机密码
   > 打开 访达-应用程序-实用工具-钥匙串访问(`Keychain Access.app`), 右键"登录"锁定钥匙串，然后再解锁即可. [原文](https://github.com/desktop/desktop/issues/3625#issuecomment-352319346)
@@ -83,7 +80,7 @@
 2. `git clone https://github.com/xinshangshangxin/snet-x`
 3. 进入`snet-x`, 执行 `npm run start:pre`
 4. 下载 [snet](https://github.com/monsterxx03/snet) `brew install jq && bash .github/shells/download-github-release.sh`
-5. `cd main && npx electron-rebuild`. [原文](https://github.com/electron/electron-rebuild#how-does-it-work)
+5. `cd main && npx electron-rebuild` [原文](https://github.com/electron/electron-rebuild#how-does-it-work)
 6. 本地实时预览, 第一个命令窗口: `cd render && npm start`; 第二个命令窗口: `cd main && npm start`, 其中`render`实时刷新, 而 `main` 需要手动重启
 7. 本地构建: `npm run build:local`
 
