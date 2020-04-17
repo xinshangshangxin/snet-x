@@ -2,6 +2,10 @@
 
 一款透明代理(`transparent proxy`)工具[`snet`](https://github.com/monsterxx03/snet) 的 `MacOS`(`OS X`) 可视化界面
 
+## [下载地址](https://github.com/xinshangshangxin/snet-x/releases)
+
+[![release](https://img.shields.io/github/v/release/xinshangshangxin/snet-x)](https://github.com/xinshangshangxin/snet-x/releases)
+
 ## 界面截图
 
 <div>
@@ -19,7 +23,7 @@
 
 - 配置界面快捷搜索支持哪些?
 
-  > 包含设置项/Shadowsocks 配置搜搜/IP 检测/域名检测/快捷指令等, 搜索流程如下图
+  > 包含 设置项/Shadowsocks 配置/IP 检测/域名检测/快捷指令等, 搜索流程如下图
 
   ![search](./assets/0.png)
 
