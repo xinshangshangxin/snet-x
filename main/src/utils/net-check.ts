@@ -1,26 +1,27 @@
-import { union } from 'lodash';
-
 import bb from 'bluebird';
+import { union, set } from 'lodash';
+
 import { dig } from '../shared/net-tools/dig';
 import { checkIp } from '../shared/net-tools/ip';
+import { exec } from '../shared/shell/exec';
 import { sudoRun } from '../shared/shell/sudo-run';
 import { notifyIpResult } from './notification';
-import { exec } from '../shared/shell/exec';
-import { Errors } from '../shared/project/error';
+
+/* eslint-disable class-methods-use-this */
 
 export class NetCheck {
   public static urlPickDomain = /^(https?:\/\/)?(([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6})/;
 
   public static domainReg = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$/;
 
-  // eslint-disable-next-line class-methods-use-this
+  public static ipReg = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+
   public async checkIp(timeout?: number) {
     const data = await checkIp(timeout);
     console.info('data: ', data);
     return data;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   public async notifyIp(timeout?: number) {
     const list = await checkIp(timeout);
 
@@ -37,14 +38,35 @@ export class NetCheck {
     notifyIpResult(message);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  public async checkIsFQ(url: string) {
-    if (!NetCheck.urlPickDomain.test(url)) {
-      throw new Errors.DomainCheckFailed({ msg: 'not valid domain' });
+  public pickDomainOrIp(input: string) {
+    const temp = input.trim();
+    if (NetCheck.urlPickDomain.test(temp)) {
+      return RegExp.$2;
     }
 
-    const domain = RegExp.$2;
+    if (NetCheck.ipReg.test(temp)) {
+      return temp;
+    }
+
+    return undefined;
+  }
+
+  public async checkIpIsFQ(ip: string) {
+    const { stdout, stderr } = await sudoRun.runAsync(`pfctl -t BYPASS_SNET -T test ${ip}`, {
+      stdio: 'pipe',
+    });
+
+    const reg = /(\d+)\/\1\s+addresses\s+match/;
+    return !reg.test(stdout + stderr);
+  }
+
+  public async checkIsFQ(url: string, domain: string) {
     const digResult = await dig(`dig ${domain}`);
+
+    if (NetCheck.ipReg.test(domain)) {
+      set(digResult, 'answer', [{ value: domain, type: 'A' }]);
+    }
+
     const answerA = digResult.answer
       .filter(({ type }) => {
         return type === 'A';
@@ -61,12 +83,8 @@ export class NetCheck {
     await bb
       .all(
         checkIpList.map(async (ip) => {
-          const { stdout, stderr } = await sudoRun.runAsync(`pfctl -t BYPASS_SNET -T test ${ip}`, {
-            stdio: 'pipe',
-          });
-
-          const reg = /(\d+)\/\1\s+addresses\s+match/;
-          if (!reg.test(stdout + stderr)) {
+          const data = await this.checkIpIsFQ(ip);
+          if (data) {
             isFQ = true;
           }
         })
@@ -77,7 +95,7 @@ export class NetCheck {
     if (isFQ) {
       ({ stdout: head } = await bb
         .try(() => {
-          return exec(`curl -X HEAD -I ${domain}`);
+          return exec(`curl -X HEAD -I ${url}`);
         })
         .timeout(1000)
         .catch((e) => {
@@ -90,6 +108,7 @@ export class NetCheck {
         .trim()
         .split(/[\r\n]/)
         .shift(),
+      url,
       domain,
       isFQ,
       digResult,

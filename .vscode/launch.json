@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
-      "runtimeExecutable": "./node_modules/.bin/electron",
+      "runtimeExecutable": "${workspaceFolder}/main/node_modules/.bin/electron",
       "cwd": "${workspaceFolder}/main/",
       "args": ["."]
     }

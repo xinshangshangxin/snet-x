@@ -17,7 +17,7 @@ import {
   updateSnetConfigSort,
 } from '../storage';
 import { dbDir, logsDir } from '../storage/store-path';
-import { NetCheck, netCheck } from '../utils/net-check';
+import { netCheck } from '../utils/net-check';
 import { checkPermissionIsInvalid } from './check-permission';
 import { instance } from './instance';
 
@@ -97,11 +97,12 @@ const routers: RouterMap = {
     return netCheck.checkIp(isNaN(nu) ? undefined : nu);
   },
   'domain:check': (body: string) => {
-    if (NetCheck.urlPickDomain.test(body)) {
-      return netCheck.checkIsFQ(RegExp.$2);
+    const input = netCheck.pickDomainOrIp(body);
+    if (!input) {
+      throw new Errors.DomainCheckFailed({ msg: 'no valid domain or ip' });
     }
 
-    throw new Errors.DomainCheckFailed({ msg: 'not valid domain' });
+    return netCheck.checkIsFQ(body, input);
   },
   'log:open': () => {
     return exec(`open "${logsDir}"`);
