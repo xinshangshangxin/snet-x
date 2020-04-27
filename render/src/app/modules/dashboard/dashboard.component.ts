@@ -8,10 +8,16 @@ import { ElectronService } from '../../core/services/electron.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { LoadingDialogService } from '../../loading-dialog/loading-dialog.service';
 
-type ConfigMenu = { title: string; intro: string; icon: string } & (
-  | { navigate?: string[] | { commands: string[]; extras: any }; action: Function }
-  | { navigate: string[] | { commands: string[]; extras: any }; action?: Function }
-);
+type ConfigMenu = { title: string; intro: string } & (
+  | {
+      iconImage: string;
+    }
+  | { icon: string }
+) &
+  (
+    | { navigate?: string[] | { commands: string[]; extras: any }; action: Function }
+    | { navigate: string[] | { commands: string[]; extras: any }; action?: Function }
+  );
 
 interface ConfigMenus {
   type: 'config';
@@ -105,12 +111,10 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       },
     },
     {
-      title: '退出',
-      intro: '停止代理, 退出 snet, 退出SnetX',
-      icon: 'exit_to_app',
-      action: async () => {
-        await this.electronRouter.post('exit:all');
-      },
+      title: '测速',
+      intro: '通过 speed-test, 测试当前代理下网速',
+      iconImage: 'assets/speed-black.svg',
+      navigate: ['/speed-test'],
     },
   ];
 

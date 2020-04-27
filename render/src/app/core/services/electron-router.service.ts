@@ -78,8 +78,11 @@ export class ElectronRouterService {
   }
 
   private listenMessage() {
-    ipcRenderer?.on('post', async (event: any, id: any, cmd: any, body: any) => {
-      console.debug(`response: ┣ ${cmd} ┫`, body, id);
+    ipcRenderer?.on('post', async (event: any, id: any, cmd: any, body: any, log: boolean) => {
+      if (log !== false) {
+        console.debug(`response: ┣ ${cmd} ┫`, body, id);
+      }
+
       if (cmd === 'world') {
         console.info('client response world', id);
         clearInterval(this.helloInterval);

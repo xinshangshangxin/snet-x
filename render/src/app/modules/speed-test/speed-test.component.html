@@ -1,0 +1,33 @@
+<div fxLayout="row" fxLayoutAlign="space-around">
+  <mat-card class="speed-test" [class.loading-spinner]="status === 'starting'" (click)="run()">
+    <mat-card-content>
+      <h2 *ngIf="status === 'stopped'">点击开始测速</h2>
+      <h2 *ngIf="status === 'starting'">请稍等</h2>
+      <h2 *ngIf="status === 'running'">点击取消测速</h2>
+
+      <div class="result">
+        <div class="item">
+          <div>PING 延迟</div>
+          <div>{{ result.ping.latency || '--' }}</div>
+        </div>
+
+        <div class="item">
+          <div>下载速度</div>
+          <div>{{ speedText(result.download.bandwidth) }}</div>
+        </div>
+
+        <div class="item">
+          <div>上传速度</div>
+          <div>{{ speedText(result.upload.bandwidth) }}</div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+
+<div class="bottom">
+  <button [routerLink]="['/dashboard']" mat-raised-button>
+    返回
+  </button>
+</div>

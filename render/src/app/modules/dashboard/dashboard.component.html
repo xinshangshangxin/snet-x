@@ -47,7 +47,8 @@
             </div>
           </div>
           <div class="right">
-            <mat-icon>{{ menu.icon }}</mat-icon>
+            <mat-icon *ngIf="menu.icon">{{ menu.icon }}</mat-icon>
+            <img *ngIf="menu.iconImage" [src]="menu.iconImage">
           </div>
         </div>
       </div>

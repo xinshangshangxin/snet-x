@@ -27,6 +27,8 @@ export enum ERROR_MAP {
   NoGithubReleaseFound = '未找到github release',
   NetworkNotFQ = '网络未翻墙',
   DownloadFailed = '下载失败',
+
+  SpeedTestFailed = '测速失败',
 }
 
 export interface ErrorJSON {

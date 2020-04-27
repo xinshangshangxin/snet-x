@@ -1,0 +1,40 @@
+:host {
+    width: 100%;
+    margin: 100px 50px 0 30px;
+}
+
+.speed-test {
+    cursor: pointer;
+
+    h2 {
+        text-align: center;
+    }
+
+    &.loading-spinner {
+        opacity: 0.5;
+    }
+}
+
+.result {
+    width: 100%;
+    min-height: 130px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-around;
+    align-items: center;
+
+    .item {
+        min-width: 200px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+.bottom {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+}

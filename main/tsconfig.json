@@ -1,10 +1,10 @@
 {
-  "include": ["src/**/*.ts", "index.ts", "src/qrcode/decode.worker.js"],
+  "include": ["index.ts", "src/**/*.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "outDir": "./dist/",
     "resolveJsonModule": true,
-    "target": "ES5",
+    "target": "ES2018",
     "module": "CommonJS",
     "allowJs": false,
     "checkJs": false,
@@ -24,8 +24,6 @@
     "esModuleInterop": true,
     "declaration": false,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "types": ["node"],
-    "lib": ["es2017", "es2016", "es2015", "dom"]
+    "experimentalDecorators": true
   }
 }

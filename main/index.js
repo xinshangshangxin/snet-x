@@ -9,6 +9,7 @@ if (isDev) {
   // typescript
   require('ts-node').register({
     logError: true,
+    files: true,
   });
 
   // 自动重启 electron

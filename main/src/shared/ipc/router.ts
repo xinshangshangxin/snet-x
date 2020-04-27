@@ -23,13 +23,21 @@ export class Router {
     this.handles[cmd] = fun;
   }
 
-  public async post(cmd: string, body?: any, waitResponse: 'ignore' | number = 'ignore') {
+  public async post(
+    cmd: string,
+    body?: any,
+    waitResponse: 'ignore' | number = 'ignore',
+    log = true
+  ) {
     await this.connectedDeferred.promise;
 
     const id = v4();
 
-    console.debug('server request:  ', { id, cmd, body });
-    this.webContents.send('post', id, cmd, body);
+    if (log !== false) {
+      console.debug('server request:  ', { id, cmd, body });
+    }
+
+    this.webContents.send('post', id, cmd, body, log);
 
     if (waitResponse === 'ignore') {
       return BB.resolve();

@@ -8,6 +8,7 @@ import { DomainCheckComponent } from './modules/domain-check/domain-check.compon
 import { HomeComponent } from './modules/home/home.component';
 import { IpCheckComponent } from './modules/ip-check/ip-check.component';
 import { PasswordComponent } from './modules/password/password.component';
+import { SpeedTestComponent } from './modules/speed-test/speed-test.component';
 import { StepperComponent } from './modules/stepper/stepper.component';
 import { VersionComponent } from './modules/version/version.component';
 
@@ -51,6 +52,10 @@ const routes: Routes = [
       {
         path: 'version',
         component: VersionComponent,
+      },
+      {
+        path: 'speed-test',
+        component: SpeedTestComponent,
       },
     ],
   },

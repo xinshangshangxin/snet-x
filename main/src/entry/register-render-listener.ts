@@ -2,7 +2,9 @@ import { app } from 'electron';
 import { isNaN, toPairs } from 'lodash';
 import { throttleTime } from 'rxjs/operators';
 
+import { Subscription } from 'rxjs';
 import { getScreenQRCode } from '../qrcode';
+import { speed } from '../shared/net-tools/speed-test';
 import { Errors } from '../shared/project/error';
 import { exec } from '../shared/shell/exec';
 import { sudoRun } from '../shared/shell/sudo-run';
@@ -38,6 +40,8 @@ async function checkSudo(rerun = true) {
     await snet.startup();
   }
 }
+
+let speedTestSubscription: Subscription | undefined;
 
 const routers: RouterMap = {
   'config:schema': () => {
@@ -164,6 +168,27 @@ const routers: RouterMap = {
 
     const { snet } = instance;
     await snet.checkPath();
+  },
+  'speed-test:start': async ({ notifyId } = {}) => {
+    const { router } = instance;
+    const speedTest$ = speed();
+
+    speedTestSubscription = speedTest$.subscribe(
+      (value) => {
+        router?.post(notifyId, value, 'ignore', false);
+      },
+      (e) => {
+        console.warn(e);
+        router?.post(
+          notifyId,
+          new Errors.SpeedTestFailed({ msg: e.message, stack: e.stack }).toJSON(),
+          'ignore'
+        );
+      }
+    );
+  },
+  'speed-test:cancel': async () => {
+    speedTestSubscription?.unsubscribe();
   },
   'qrcode:scan': async () => {
     const { win } = instance;

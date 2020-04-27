@@ -18,6 +18,7 @@ import { PasswordComponent } from './modules/password/password.component';
 import { StepperComponent } from './modules/stepper/stepper.component';
 import { ShareModule } from './share/share.module';
 import { VersionComponent } from './modules/version/version.component';
+import { SpeedTestComponent } from './modules/speed-test/speed-test.component';
 
 @NgModule({
   entryComponents: [],
@@ -36,6 +37,7 @@ import { VersionComponent } from './modules/version/version.component';
     ConfigSsListComponent,
     StepperComponent,
     VersionComponent,
+    SpeedTestComponent,
   ],
   imports: [CoreModule, ShareModule, AppRoutingModule],
   providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }],
