@@ -1,6 +1,9 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { untilDestroyed } from 'ngx-take-until-destroy';
 
 import { ElectronRouterService } from '../../core/services/electron-router.service';
+import { NotificationService } from '../../core/services/notification.service';
 
 interface UploadProgress {
   type: 'upload';
@@ -102,7 +105,9 @@ export class SpeedTestComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly electronRouter: ElectronRouterService,
-    private readonly ngZone: NgZone
+    private readonly ngZone: NgZone,
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly notificationService: NotificationService
   ) {}
 
   public ngOnInit(): void {
@@ -113,27 +118,34 @@ export class SpeedTestComponent implements OnInit, OnDestroy {
 
       return false;
     });
+
+    this.activatedRoute.queryParams.pipe(untilDestroyed(this)).subscribe(({ run }) => {
+      console.info('run: ', run);
+      if (run) {
+        this.run();
+      }
+    }, console.warn);
   }
 
-  public ngOnDestroy(): void {
-    this.cancel();
+  public async ngOnDestroy() {
+    await this.cancel();
     this.unregisterRouter();
   }
 
   public async run() {
     if (this.status === 'running') {
-      await this.cancel();
       this.status = 'stopped';
-    } else {
-      await this.start();
+      await this.cancel();
+    } else if (this.status !== 'starting') {
       this.status = 'starting';
+      await this.start();
     }
   }
 
   public async start() {
+    this.status = 'starting';
     this.result = SpeedTestComponent.getInitResult();
     await this.electronRouter.post('speed-test:start', { notifyId: this.notifyId });
-    this.status = 'starting';
   }
 
   public async cancel() {
@@ -159,12 +171,17 @@ export class SpeedTestComponent implements OnInit, OnDestroy {
   }
 
   private resolveSpeedTest(
-    data: PingProgress | DownloadProgress | UploadProgress | SpeedTestResult
+    data: PingProgress | DownloadProgress | UploadProgress | SpeedTestResult | { type: 'error' }
   ) {
     switch (data.type) {
       case 'result':
         this.result = data;
         this.status = 'stopped';
+        break;
+      case 'error':
+        this.status = 'stopped';
+        console.warn(data);
+        this.notificationService.open('测速失败, 请稍后重试', undefined, { duration: 5000 });
         break;
       default:
         this.status = 'running';

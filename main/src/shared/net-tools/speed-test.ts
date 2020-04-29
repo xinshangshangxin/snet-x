@@ -79,7 +79,7 @@ export interface SpeedTestResult {
   };
 }
 
-function speed() {
+function speed(speedTestParams?: any) {
   return new Observable<PingProgress | DownloadProgress | UploadProgress | SpeedTestResult>(
     (observer) => {
       const cancel = speedTest.makeCancel();
@@ -90,6 +90,7 @@ function speed() {
         progress: (data: any) => {
           observer.next(data);
         },
+        ...speedTestParams,
       })
         .then((data: Omit<SpeedTestResult, 'type'>) => {
           observer.next({
@@ -103,6 +104,7 @@ function speed() {
         });
 
       return () => {
+        console.debug('cancel speed test');
         cancel();
       };
     }

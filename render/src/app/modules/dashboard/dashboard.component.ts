@@ -114,7 +114,10 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       title: '测速',
       intro: '通过 speed-test, 测试当前代理下网速',
       iconImage: 'assets/speed-black.svg',
-      navigate: ['/speed-test'],
+      navigate: {
+        commands: ['/speed-test'],
+        extras: { queryParams: { run: true } },
+      },
     },
   ];
 
