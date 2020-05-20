@@ -1,10 +1,12 @@
 import { app } from 'electron';
+import { noop } from 'lodash';
 
 import { isDev } from '../shared/project/env';
 import { getStatus, initDatabase } from '../storage';
 import { addTray } from './add-tray-listener';
 import { dealPermission } from './deal-permission';
 import { instance, QuitAppStatus } from './instance';
+import { onResume } from './power-monitor';
 import { showWindow } from './show-window';
 
 async function ready() {
@@ -21,6 +23,9 @@ async function ready() {
   if (isDev) {
     showWindow();
   }
+
+  // 监控系统恢复
+  onResume().subscribe(noop, console.warn);
 
   // 检查是否初始化过
   if (!status.inited) {
