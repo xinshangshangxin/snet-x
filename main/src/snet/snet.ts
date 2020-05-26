@@ -113,6 +113,7 @@ class Snet extends Core {
     if (cleanPf) {
       console.debug('cleanPf');
       // 清除本地 DNS
+      await sudoRun.runAsync('dscacheutil -flushcache');
       await sudoRun.runAsync('killall -HUP mDNSResponder');
       // 清除 pf 规则
       await sudoRun.runAsync('pfctl -d', { stdio: 'pipe' });
