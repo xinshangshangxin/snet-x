@@ -109,7 +109,12 @@ export class Router {
 
           const result = await this.handles[cmd](body);
           event.sender.send('post', id, cmd, result);
-          console.info('server response: ', { id, cmd, result });
+
+          if (/config/.test(cmd)) {
+            console.info('server response: ', { id, cmd, result: 'not show' });
+          } else {
+            console.info('server response: ', { id, cmd, result });
+          }
           return;
         }
 
