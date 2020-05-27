@@ -123,7 +123,7 @@ const routers: RouterMap = {
   },
   'snet:clear': async () => {
     const { snet } = instance;
-    await snet?.stop({ notify: true, cleanPf: true });
+    await snet?.stop({ notify: true, clean: true });
   },
   'snet:version': async () => {
     const { snet } = instance;

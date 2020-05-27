@@ -54,6 +54,8 @@ class Snet extends Core {
 
     await sudoRun.runAsync(`chmod +x "${this.snetPath}"`);
 
+    await this.stop({ persistStatus: false, notify, clean: true });
+
     const { child } = sudoRun.run(`"${this.snetPath}" -config "${snetConfigPath}"`, {
       stdio: 'pipe',
     });
@@ -86,15 +88,14 @@ class Snet extends Core {
       notifyRunning(config);
     }
 
-    // 清除本地 DNS
-    await sudoRun.runAsync('killall -HUP mDNSResponder');
+    await Snet.cleanDns();
   }
 
   public async stop({
     persistStatus = true,
     notify = false,
-    cleanPf = false,
-  }: { persistStatus?: boolean; notify?: boolean; cleanPf?: boolean } = {}) {
+    clean = false,
+  }: { persistStatus?: boolean; notify?: boolean; clean?: boolean } = {}) {
     console.info('stop run', { pid: this.child?.pid, snetPath: this.snetPath });
 
     if (this.child) {
@@ -110,13 +111,12 @@ class Snet extends Core {
 
     this.tray.changeStatus('stop');
 
-    if (cleanPf) {
+    if (clean) {
       console.debug('cleanPf');
       // 清除本地 DNS
-      await sudoRun.runAsync('dscacheutil -flushcache');
-      await sudoRun.runAsync('killall -HUP mDNSResponder');
+      await Snet.cleanDns();
       // 清除 pf 规则
-      await sudoRun.runAsync('pfctl -d', { stdio: 'pipe' });
+      await Snet.cleanPF();
     }
 
     if (persistStatus) {
@@ -149,6 +149,16 @@ class Snet extends Core {
       update: ui !== latestVersion,
       release,
     };
+  }
+
+  private static async cleanDns() {
+    // 清除本地 DNS
+    await sudoRun.runAsync('dscacheutil -flushcache');
+    await sudoRun.runAsync('killall -HUP mDNSResponder');
+  }
+
+  private static async cleanPF() {
+    await sudoRun.runAsync('pfctl -d', { stdio: 'pipe' });
   }
 }
 

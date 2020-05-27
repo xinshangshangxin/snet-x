@@ -38,7 +38,7 @@ async function resolveClick({
     menuItem.checked = true;
 
     // 切换配置
-    await instance.snet.stop({ persistStatus: false, notify: false, cleanPf: true });
+    await instance.snet.stop({ persistStatus: false, notify: false, clean: true });
     await instance.snet.start({ notify: false });
     return null;
   }
@@ -48,7 +48,7 @@ async function resolveClick({
   }
 
   // 切换配置
-  await instance.snet.stop({ persistStatus: false, notify: false, cleanPf: true });
+  await instance.snet.stop({ persistStatus: false, notify: false, clean: true });
   await instance.snet.start({ configId: config._id, notify: true });
 
   // eslint-disable-next-line no-param-reassign

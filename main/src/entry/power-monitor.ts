@@ -9,7 +9,7 @@ import { instance } from './instance';
 
 function restartSnet() {
   // 先停止
-  return from(instance.snet.stop({ persistStatus: false, notify: false, cleanPf: true })).pipe(
+  return from(instance.snet.stop({ persistStatus: false, notify: false, clean: true })).pipe(
     switchMap(() => {
       return from(getStatus());
     }),
