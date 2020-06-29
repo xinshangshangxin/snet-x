@@ -199,6 +199,18 @@ const SnetConfigModel = nmdb.model<SnetConfig>('SnetConfig', {
     type: 'number',
     required: true,
   },
+  'enable-stats': {
+    type: 'boolean',
+    default: true,
+  },
+  'stats-port': {
+    type: 'number',
+    default: 8810,
+  },
+  'stats-enable-tls-sni-sniffer': {
+    type: 'boolean',
+    default: true,
+  },
 
   order: {
     type: 'number',

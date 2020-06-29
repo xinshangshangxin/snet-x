@@ -113,6 +113,22 @@ function getSchema(name = `配置 ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`) {
           label: '监听端口',
           default: 1111,
         },
+        'enable-stats': {
+          type: 'checkbox',
+          label: '状态服务',
+          default: false,
+        },
+        'stats-port': {
+          type: 'input',
+          inputType: 'number',
+          label: '状态接口地址',
+          default: 8810,
+        },
+        'stats-enable-tls-sni-sniffer': {
+          type: 'checkbox',
+          label: 'tls嗅探',
+          default: true,
+        },
       },
     },
     DNSSchema,
