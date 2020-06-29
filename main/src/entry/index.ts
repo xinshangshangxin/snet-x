@@ -8,8 +8,11 @@ import { dealPermission } from './deal-permission';
 import { instance, QuitAppStatus } from './instance';
 import { onResume } from './power-monitor';
 import { showWindow } from './show-window';
+import { ensureStorePaths } from '../storage/store-path';
 
 async function ready() {
+  // 初始化存储路径
+  await ensureStorePaths();
   // 初始化数据库
   await initDatabase();
 
