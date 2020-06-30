@@ -1,6 +1,8 @@
 import { createWriteStream, ensureFile, writeJSON } from 'fs-extra';
 import { escapeRegExp } from 'lodash';
+import { v4 } from 'uuid';
 
+import { defer, Deferred } from '../shared/defer';
 import { GithubRelease } from '../shared/github-release';
 import { Errors } from '../shared/project/error';
 import { treeProcessIds } from '../shared/shell/ps-tree';
@@ -12,32 +14,106 @@ import { getConfig } from './config';
 import { Core } from './snet-core';
 import { SnetTray } from './tray';
 
+interface StartConfig {
+  configId?: string;
+  notify?: boolean;
+}
+
+interface StopConfig {
+  persistStatus?: boolean;
+  notify?: boolean;
+  clean?: boolean;
+}
+
 const uiRepo = 'xinshangshangxin/snet-x';
 class Snet extends Core {
+  private actionDeferred: Deferred<any> = defer();
+
   constructor(public tray = new SnetTray(), public snetXRelease = new GithubRelease(uiRepo)) {
     super();
+    this.actionDeferred.resolve();
   }
 
   public async startup() {
+    return this.lockAction('startup', async () => {
+      return this.tryStartup();
+    });
+  }
+
+  public async start(config?: StartConfig, isCheckLock?: boolean) {
+    return this.lockAction(
+      'start',
+      async () => {
+        return this.tryStart(config);
+      },
+      isCheckLock
+    );
+  }
+
+  public async stop(config?: StopConfig, isCheckLock?: boolean) {
+    return this.lockAction(
+      'stop',
+      async () => {
+        return this.tryStop(config);
+      },
+      isCheckLock
+    );
+  }
+
+  private async lockAction<T>(key: string, cb: () => Promise<T>, isCheckLock = true) {
+    const uid = v4();
+    if (!isCheckLock) {
+      console.debug(`[${key}] skip check lock [${uid}]`);
+
+      return cb();
+    }
+
+    console.debug(`[${key}] wait latest locking.... [${uid}]`);
+    // 等待上次解锁
+    await this.actionDeferred.promise;
+
+    console.debug(`[${key}] relocking.... [${uid}]`);
+    // 重新 上锁
+    this.actionDeferred = defer();
+
+    try {
+      console.debug(`[${key}] call real function [${uid}]`);
+      const data = await cb();
+
+      console.debug(`[${key}] unlocking... [${uid}]`);
+      // 解锁
+      this.actionDeferred.resolve(data);
+
+      return data;
+    } catch (e) {
+      // 解锁
+      console.debug(`[${key}] unlocking... [${uid}]`);
+
+      this.actionDeferred.resolve();
+      throw e;
+    }
+  }
+
+  private async tryStartup() {
     console.info('startup...');
 
     console.debug('创建 snet 日志文件');
     await ensureFile(snetLogPath);
 
     console.debug('第一次启动, 先尝试停止上一次可能的残留');
-    await this.stop({ persistStatus: false });
+    await this.tryStop({ persistStatus: false });
 
     const status = await getStatus();
 
     console.debug('启动检查上次是否在运行状态', { status });
     if (status?.running) {
-      await this.start();
+      await this.tryStart();
     }
 
     console.info('startup done');
   }
 
-  public async start({ configId, notify = false }: { configId?: string; notify?: boolean } = {}) {
+  private async tryStart({ configId, notify = false }: StartConfig = {}) {
     const config = await getConfig(configId);
 
     if (!config) {
@@ -54,7 +130,7 @@ class Snet extends Core {
 
     await sudoRun.runAsync(`chmod +x "${this.snetPath}"`);
 
-    await this.stop({ persistStatus: false, notify, clean: true });
+    await this.tryStop({ persistStatus: false, notify, clean: true });
 
     const { child } = sudoRun.run(`"${this.snetPath}" -config "${snetConfigPath}"`, {
       stdio: 'pipe',
@@ -91,11 +167,7 @@ class Snet extends Core {
     await Snet.cleanDns();
   }
 
-  public async stop({
-    persistStatus = true,
-    notify = false,
-    clean = false,
-  }: { persistStatus?: boolean; notify?: boolean; clean?: boolean } = {}) {
+  private async tryStop({ persistStatus = true, notify = false, clean = false }: StopConfig = {}) {
     console.info('stop run', { pid: this.child?.pid, snetPath: this.snetPath });
 
     if (this.child) {
