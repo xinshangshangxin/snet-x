@@ -211,6 +211,10 @@ const SnetConfigModel = nmdb.model<SnetConfig>('SnetConfig', {
     type: 'boolean',
     default: true,
   },
+  'stats-enable-http-host-sniffer': {
+    type: 'boolean',
+    default: true,
+  },
 
   order: {
     type: 'number',

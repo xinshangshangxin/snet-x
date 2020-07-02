@@ -129,6 +129,11 @@ function getSchema(name = `配置 ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`) {
           label: 'tls嗅探',
           default: true,
         },
+        'stats-enable-http-host-sniffer': {
+          type: 'checkbox',
+          label: 'http嗅探',
+          default: true,
+        },
       },
     },
     DNSSchema,
