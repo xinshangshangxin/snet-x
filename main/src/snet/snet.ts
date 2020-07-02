@@ -40,34 +40,20 @@ class Snet extends Core {
     });
   }
 
-  public async start(config?: StartConfig, isCheckLock?: boolean) {
-    return this.lockAction(
-      'start',
-      async () => {
-        return this.tryStart(config);
-      },
-      isCheckLock
-    );
+  public async start(config?: StartConfig) {
+    return this.lockAction('start', async () => {
+      return this.tryStart(config);
+    });
   }
 
-  public async stop(config?: StopConfig, isCheckLock?: boolean) {
-    return this.lockAction(
-      'stop',
-      async () => {
-        return this.tryStop(config);
-      },
-      isCheckLock
-    );
+  public async stop(config?: StopConfig) {
+    return this.lockAction('stop', async () => {
+      return this.tryStop(config);
+    });
   }
 
-  private async lockAction<T>(key: string, cb: () => Promise<T>, isCheckLock = true) {
+  private async lockAction<T>(key: string, cb: () => Promise<T>) {
     const uid = v4();
-    if (!isCheckLock) {
-      console.debug(`[${key}] skip check lock [${uid}]`);
-
-      return cb();
-    }
-
     console.debug(`[${key}] wait latest locking.... [${uid}]`);
     // 等待上次解锁
     await this.actionDeferred.promise;
@@ -130,7 +116,7 @@ class Snet extends Core {
 
     await sudoRun.runAsync(`chmod +x "${this.snetPath}"`);
 
-    await this.tryStop({ persistStatus: false, notify, clean: true });
+    await this.tryStop({ persistStatus: false, notify: false, clean: true });
 
     const { child } = sudoRun.run(`"${this.snetPath}" -config "${snetConfigPath}"`, {
       stdio: 'pipe',
