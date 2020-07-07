@@ -61,7 +61,7 @@ async function beforeQuit(e: Event) {
     e.preventDefault();
 
     // 尝试先停止snet
-    await snet.stop({ persistStatus: false });
+    await snet.stop({ persistStatus: false }, true);
 
     // 清除 render 消息监听
     router?.destroy();

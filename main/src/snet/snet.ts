@@ -46,7 +46,11 @@ class Snet extends Core {
     });
   }
 
-  public async stop(config?: StopConfig) {
+  public async stop(config?: StopConfig, force = false) {
+    if (force) {
+      return this.tryStop(config);
+    }
+
     return this.lockAction('stop', async () => {
       return this.tryStop(config);
     });
@@ -62,6 +66,12 @@ class Snet extends Core {
     // 重新 上锁
     this.actionDeferred = defer();
 
+    // 超时解锁
+    const timer = setTimeout(() => {
+      console.debug(`[${key}] timeout unlocking... [${uid}]`);
+      this.actionDeferred.resolve();
+    }, 3000);
+
     try {
       console.debug(`[${key}] call real function [${uid}]`);
       const data = await cb();
@@ -69,6 +79,7 @@ class Snet extends Core {
       console.debug(`[${key}] unlocking... [${uid}]`);
       // 解锁
       this.actionDeferred.resolve(data);
+      clearTimeout(timer);
 
       return data;
     } catch (e) {
@@ -76,6 +87,8 @@ class Snet extends Core {
       console.debug(`[${key}] unlocking... [${uid}]`);
 
       this.actionDeferred.resolve();
+      clearTimeout(timer);
+
       throw e;
     }
   }
